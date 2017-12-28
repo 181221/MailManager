@@ -1,4 +1,4 @@
-package no.pederyo.mail;
+package no.pederyo.modell;
 
 public class Mail {
 
@@ -7,6 +7,10 @@ public class Mail {
     private String msg;
     private String subject;
     private String result;
+
+    public Mail(){
+        this("","","","");
+    }
 
     public Mail(String til, String fra, String msg, String subject) {
         this.til = til;
