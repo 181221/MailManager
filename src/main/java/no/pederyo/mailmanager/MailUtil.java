@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class MailUtil {
 
-    private static String send(Mail mail, Smtp smtp) {
+    public static String send(Mail mail, Smtp smtp) {
         try {
             MimeMessage message = new MimeMessage(smtp.getSession());
             message.setFrom(new InternetAddress(mail.getFra()));
@@ -32,7 +32,7 @@ public class MailUtil {
         return mail.getResult();
     }
 
-    private static void check(Pop3 pop3){
+    public static void check(Pop3 pop3){
         try {
             Store store = pop3.getStore();
             store.connect();
