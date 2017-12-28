@@ -11,6 +11,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MailUtil {
 
@@ -30,6 +32,41 @@ public class MailUtil {
         }
         return mail.getResult();
     }
+    //byttes ut med regex etterhvert.
+    public static boolean subjectInnholderOrd(String subject){
+        return subject.contains("kvittering") || subject.contains("ordre") || subject.contains("ordrebekreftelse") || subject.contains("bekreftelse");
+    }
+
+    public static void organiserInbox(Imap imap, String tilMappe) {
+        List<Message> meldinger = new ArrayList();
+        try {
+            imap.connect();
+            Store store = imap.getStore();
+            Folder inbox = store.getDefaultFolder().list()[0];
+            Folder mappen = store.getFolder(tilMappe);
+            inbox.open(Folder.READ_WRITE);
+            mappen.open(Folder.READ_WRITE);
+
+            for(Message m : inbox.getMessages()) {
+                String subject = m.getSubject().toLowerCase();
+                String melding = m.getContent().toString();
+                if(subjectInnholderOrd(subject))
+                    meldinger.add(m);
+                else {
+                    if(subjectInnholderOrd(melding))
+                        meldinger.add(m);
+                }
+            }
+            Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
+            inbox.copyMessages(tempMeldinger, mappen);
+            imap.close();
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void checkInbox(Imap imap) {
         try {
             imap.connect();
@@ -39,23 +76,6 @@ public class MailUtil {
             System.out.println("Antall meldinger " + inbox.getMessageCount());
             System.out.println("Nye meldinger " + inbox.getUnreadMessageCount());
         } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
-    public static void check(Imap imap) {
-        try {
-            imap.connect();
-            Store store = imap.getStore();
-            store.getFolder("Inbox").open(1);
-            Folder[] emailFolder = store.getDefaultFolder().list("*");
-            System.out.println(store.getFolder("INBOX").getMessageCount());
-            for (Folder f : emailFolder) {
-                System.out.println(f.getName());
-            }
-            imap.close();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }

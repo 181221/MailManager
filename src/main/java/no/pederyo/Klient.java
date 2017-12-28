@@ -11,7 +11,8 @@ import javax.mail.Store;
 public class Klient {
     public static void main(String[] args) throws MessagingException {
         Imap imap = new Imap();
-        MailUtil.checkInbox(imap);
+        MailUtil.organiserInbox(imap, "Kvitteringer");
+        //MailUtil.checkInbox(imap);
         //MailUtil.check(imap);
 
     }
