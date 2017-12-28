@@ -5,6 +5,7 @@ import no.pederyo.Attributter;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Store;
 import java.util.Properties;
 
 public class Smtp implements IProtokoll {
@@ -38,8 +39,16 @@ public class Smtp implements IProtokoll {
         });
     }
 
-    public Properties getProperties() {
-        return properties;
+    public Store store() {
+        return null;
+    }
+
+    public void connect() {
+
+    }
+
+    public void close() {
+
     }
 
     public Session getSession() {

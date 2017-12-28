@@ -1,13 +1,11 @@
 package no.pederyo.mailmanager;
 
+import no.pederyo.Attributter;
 import no.pederyo.modell.Mail;
 import no.pederyo.protokoll.Pop3;
 import no.pederyo.protokoll.Smtp;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Store;
+import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -32,13 +30,12 @@ public class MailUtil {
         return mail.getResult();
     }
 
-    public static void check(Pop3 pop3){
+    public static void printUtAlleMeldinger(Pop3 pop3, String type){
         try {
             Store store = pop3.getStore();
-            store.connect();
-            Folder emailFolder = store.getFolder("INBOX");
+            store.connect(Attributter.POP3HOST, Attributter.FRAMAIL, Attributter.PASSORD);
+            Folder emailFolder = store.getFolder("Inbox");
             printUtMeldinger(emailFolder);
-            emailFolder.close(false);
             store.close();
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -49,6 +46,7 @@ public class MailUtil {
 
     private static void printUtMeldinger(Folder emailFolder) throws MessagingException, IOException {
         emailFolder.open(Folder.READ_ONLY);
+        emailFolder.getFullName();
         Message[] messages = emailFolder.getMessages();
         System.out.println("messages.length---" + messages.length);
 
