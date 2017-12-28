@@ -1,3 +1,5 @@
+package no.pederyo.mail;
+
 public class Mail {
 
     private String til;
