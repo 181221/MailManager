@@ -2,13 +2,19 @@ package no.pederyo;
 
 import no.pederyo.mailmanager.MailUtil;
 import no.pederyo.modell.Mail;
-import no.pederyo.protokoll.Pop3;
+import no.pederyo.protokoll.Imap;
 import no.pederyo.protokoll.Smtp;
 
+import javax.mail.MessagingException;
+import javax.mail.Store;
+
 public class Klient {
-    public static void main(String[] args) {
-        Pop3 pop3 = new Pop3();
-        MailUtil.printUtAlleMeldinger(pop3,"null");
+    public static void main(String[] args) throws MessagingException {
+        Imap imap = new Imap();
+        imap.connect();
+        Store store = imap.getStore();
+        store.getFolder("Inbox").open(1);
+        System.out.println(store.getDefaultFolder().list("*").length);
 
     }
     public static void sendMail() {

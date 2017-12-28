@@ -5,9 +5,14 @@ import javax.mail.Store;
 import java.util.Properties;
 
 public interface IProtokoll {
+
     Properties setup();
+
     Session authenticate();
+
     Store store();
+
     void connect();
+
     void close();
 }

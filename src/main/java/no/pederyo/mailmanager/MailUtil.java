@@ -2,6 +2,7 @@ package no.pederyo.mailmanager;
 
 import no.pederyo.Attributter;
 import no.pederyo.modell.Mail;
+import no.pederyo.protokoll.Imap;
 import no.pederyo.protokoll.Pop3;
 import no.pederyo.protokoll.Smtp;
 
@@ -28,6 +29,20 @@ public class MailUtil {
             mail.setResult(e.getMessage());
         }
         return mail.getResult();
+    }
+    public static void check(Imap imap) {
+        try {
+            imap.connect();
+            imap.store().getFolder("Inbox");
+
+            Folder[] emailFolder = imap.store().getDefaultFolder().list("*");
+            System.out.println(emailFolder.length);
+            imap.close();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void printUtAlleMeldinger(Pop3 pop3, String type){
