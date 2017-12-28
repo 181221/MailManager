@@ -8,5 +8,30 @@
     <artifactId>Mail-Manager</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <developers>
+        <developer>
+            <id>181221</id>
+            <name>Peder Wiig</name>
+            <email>peder.wiig@gmail.com</email>
+            <organization>Pederyo</organization>
+            <organizationUrl>https://pederyo.no</organizationUrl>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+    </dependencies>
 
 </project>
