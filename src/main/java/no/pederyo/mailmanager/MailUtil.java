@@ -30,13 +30,28 @@ public class MailUtil {
         }
         return mail.getResult();
     }
+    public static void checkInbox(Imap imap) {
+        try {
+            imap.connect();
+            Store store = imap.getStore();
+            Folder inbox = store.getFolder("Inbox");
+            inbox.open(Folder.READ_WRITE);
+            System.out.println("Antall meldinger " + inbox.getMessageCount());
+            System.out.println("Nye meldinger " + inbox.getUnreadMessageCount());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
     public static void check(Imap imap) {
         try {
             imap.connect();
-            imap.store().getFolder("Inbox");
-
-            Folder[] emailFolder = imap.store().getDefaultFolder().list("*");
-            System.out.println(emailFolder.length);
+            Store store = imap.getStore();
+            store.getFolder("Inbox").open(1);
+            Folder[] emailFolder = store.getDefaultFolder().list("*");
+            System.out.println(store.getFolder("INBOX").getMessageCount());
+            for (Folder f : emailFolder) {
+                System.out.println(f.getName());
+            }
             imap.close();
         } catch (MessagingException e) {
             e.printStackTrace();

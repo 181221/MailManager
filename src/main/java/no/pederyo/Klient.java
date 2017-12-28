@@ -11,12 +11,12 @@ import javax.mail.Store;
 public class Klient {
     public static void main(String[] args) throws MessagingException {
         Imap imap = new Imap();
-        imap.connect();
-        Store store = imap.getStore();
-        store.getFolder("Inbox").open(1);
-        System.out.println(store.getDefaultFolder().list("*").length);
+        MailUtil.checkInbox(imap);
+        //MailUtil.check(imap);
 
     }
+
+
     public static void sendMail() {
         System.out.println("Connecting to service");
         Mail mail = new Mail("hvl.noreply@gmail.com", "hvl.noreply@gmail.com", "Hei","Test");
