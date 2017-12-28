@@ -20,7 +20,7 @@ public class Klient {
 
     public static void sendMail() {
         System.out.println("Connecting to service");
-        Mail mail = new Mail("hvl.noreply@gmail.com", "hvl.noreply@gmail.com", "Hei","Test");
+        Mail mail = new Mail("test@gmail.com", Attributter.FRAMAIL, "Hei","Test");
         Smtp smtp = new Smtp();
         System.out.println("Sending mail");
         MailUtil.send(mail, smtp);
