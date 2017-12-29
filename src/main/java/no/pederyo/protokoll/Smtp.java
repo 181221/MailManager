@@ -1,11 +1,12 @@
 package no.pederyo.protokoll;
 
 import no.pederyo.Attributter;
+import no.pederyo.modell.Mail;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class Smtp implements IProtokoll {
@@ -51,7 +52,20 @@ public class Smtp implements IProtokoll {
 
     }
 
-    public Session getSession() {
-        return session;
+    public String send(Mail mail) {
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(mail.getFra()));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mail.getTil()));
+            message.setSubject(mail.getSubject());
+            message.setText(mail.getMsg());
+            javax.mail.Transport.send(message);
+            mail.setResult("Your mail sent successfully....");
+        } catch (AddressException e) {
+            mail.setResult(e.getMessage());
+        } catch (javax.mail.MessagingException e) {
+            mail.setResult(e.getMessage());
+        }
+        return mail.getResult();
     }
 }

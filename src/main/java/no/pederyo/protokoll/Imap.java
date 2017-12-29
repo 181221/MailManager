@@ -52,8 +52,27 @@ public class Imap implements IProtokoll {
             e.printStackTrace();
         }
     }
-
-    public Store getStore() {
-        return store;
+    public Folder getMappe(String mappe){
+        Folder folder = null;
+        if(mappe != null){
+            try {
+                folder = store.getFolder(mappe);
+            }catch (MessagingException e){
+                e.printStackTrace();
+            }
+            close();
+        }
+        return folder;
+    }
+    public void checkInbox() {
+        try {
+            Folder inbox = store.getFolder("Inbox");
+            inbox.open(Folder.READ_WRITE);
+            System.out.println("Antall meldinger " + inbox.getMessageCount());
+            System.out.println("Nye meldinger " + inbox.getUnreadMessageCount());
+            close();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

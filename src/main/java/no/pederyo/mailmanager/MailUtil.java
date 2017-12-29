@@ -1,55 +1,21 @@
 package no.pederyo.mailmanager;
 
-import no.pederyo.Attributter;
-import no.pederyo.modell.Mail;
-import no.pederyo.protokoll.Imap;
-import no.pederyo.protokoll.Pop3;
-import no.pederyo.protokoll.Smtp;
-
 import javax.mail.*;
-import javax.mail.event.MessageCountAdapter;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 import java.io.IOException;
 import java.util.*;
 
 public class MailUtil {
-    private static final Set<String> VALUES = new HashSet<String>(Arrays.asList(
+    static final Set<String> VALUES = new HashSet<String>(Arrays.asList(
             new String[] {"kvittering","ordre","ordrebekreftelse","bekreftelse","receipt", "reisedokumenter"}
     ));
-    private Imap imap;
-    public MailUtil(){
-        imap = new Imap();
-    }
 
-    public static String send(Mail mail, Smtp smtp) {
-        try {
-            MimeMessage message = new MimeMessage(smtp.getSession());
-            message.setFrom(new InternetAddress(mail.getFra()));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mail.getTil()));
-            message.setSubject(mail.getSubject());
-            message.setText(mail.getMsg());
-            javax.mail.Transport.send(message);
-            mail.setResult("Your mail sent successfully....");
-        } catch (AddressException e) {
-            mail.setResult(e.getMessage());
-        } catch (javax.mail.MessagingException e) {
-            mail.setResult(e.getMessage());
-        }
-        return mail.getResult();
-    }
     public Message[] hentAlleMailTilMappe(Folder mappe){
         Message[] messages = null;
         try {
-            imap.connect();
-            Store store = imap.getStore();
             Folder folder = mappe;
             folder.open(Folder.READ_ONLY);
             messages = folder.getMessages();
-            imap.close();
             folder.close();
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -59,15 +25,11 @@ public class MailUtil {
         return messages;
     }
 
-    public Message[] hentUlestMail(){
+    public Message[] hentUlestMail(Folder folder){
         Message[] messages = null;
         try {
-            imap.connect();
-            Store store = imap.getStore();
-            Folder inbox = store.getDefaultFolder().list()[0];
-            inbox.open(Folder.READ_ONLY);
-            messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-            imap.close();
+            folder.open(Folder.READ_ONLY);
+            messages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -84,23 +46,33 @@ public class MailUtil {
             }
         }
     }
-    public static Folder hentMappe(String mappe){
-        return null;
-    }
-    public static void flyttMeldingerFraMappe(Folder fraMappe, Folder tilmappe, String avsender){
 
+    public void flyttMeldingerFraAvsenderTilMappe(Folder fraMappe, Folder tilMappe, String avsender){
+        try{
+            Folder fra = fraMappe;
+            Folder til = tilMappe;
+
+            fra.open(Folder.READ_WRITE);
+            til.open(Folder.READ_WRITE);
+            Message[] messages = fra.search(EmailSearcher.soekAvsender(avsender));
+            System.out.println(messages.length);
+
+
+            fra.close(false);
+            til.close(false);
+
+
+        }catch (MessagingException e){
+            e.printStackTrace();
+        }
     }
 
-    public void organiserInbox(Folder tilMappe) {
+    public void flyttMeldingerFraTil(Folder fraMappe, Folder tilMappe, Set<String> VALUES) {
         List<Message> meldinger = new ArrayList();
         try {
-            imap.connect();
-            Store store = imap.getStore();
-            Folder inbox = store.getDefaultFolder().list()[0];
-            Folder mappen = tilMappe;
-            inbox.open(Folder.READ_WRITE);
-            mappen.open(Folder.READ_WRITE);
-            for(Message m : inbox.getMessages()) {
+            fraMappe.open(Folder.READ_WRITE);
+            tilMappe.open(Folder.READ_WRITE);
+            for(Message m : fraMappe.getMessages()) {
                 String subject = m.getSubject().toLowerCase();
                 if(VALUES.contains(subject)) {
                     meldinger.add(m);
@@ -108,47 +80,9 @@ public class MailUtil {
                 }
             }
             Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
-            inbox.copyMessages(tempMeldinger, mappen);
-            inbox.expunge();
-            imap.close();
+            fraMappe.copyMessages(tempMeldinger, tilMappe);
+            fraMappe.expunge();
 
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void lytter() {
-        try {
-            imap.connect();
-            Store store = imap.getStore();
-            final Folder inbox = store.getFolder("INBOX");
-            final MessageCountAdapter listener = new MessageCountAdapter() {
-                @Override
-                public void messagesAdded(MessageCountEvent event) {
-                    Message[] messages = event.getMessages();
-                    for (Message message : messages) {
-                        try {
-                            System.out.println("Mail Subject:- " + message.getSubject());
-                        } catch (MessagingException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-            inbox.addMessageCountListener(listener);
-        }catch (MessagingException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void checkInbox() {
-        try {
-            imap.connect();
-            Store store = imap.getStore();
-            Folder inbox = store.getFolder("Inbox");
-            inbox.open(Folder.READ_WRITE);
-            System.out.println("Antall meldinger " + inbox.getMessageCount());
-            System.out.println("Nye meldinger " + inbox.getUnreadMessageCount());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -170,5 +104,6 @@ public class MailUtil {
 
         }
     }
+    
 
 }
