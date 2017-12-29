@@ -11,4 +11,9 @@ public class Attributter {
 
     //       ---- PORTS ----
 
+    // SokeOrd
+    public static final String[] SOKEORD = new String[] {"kvittering","ordre","ordrebekreftelse","bekreftelse","receipt", "reisedokumenter"};
+
+
+
 }

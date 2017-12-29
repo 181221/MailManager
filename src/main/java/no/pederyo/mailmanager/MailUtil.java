@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class MailUtil {
-    static final Set<String> VALUES = new HashSet<String>(Arrays.asList(
-            new String[] {"kvittering","ordre","ordrebekreftelse","bekreftelse","receipt", "reisedokumenter"}
-    ));
 
     public Message[] hentAlleMailTilMappe(Folder mappe){
         Message[] messages = null;
@@ -30,6 +27,7 @@ public class MailUtil {
         try {
             folder.open(Folder.READ_ONLY);
             messages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+            folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -48,6 +46,7 @@ public class MailUtil {
     }
 
     public void flyttMeldingerFraAvsenderTilMappe(Folder fraMappe, Folder tilMappe, String avsender){
+        List<Message> meldinger = new ArrayList();
         try{
             Folder fra = fraMappe;
             Folder til = tilMappe;
@@ -55,13 +54,15 @@ public class MailUtil {
             fra.open(Folder.READ_WRITE);
             til.open(Folder.READ_WRITE);
             Message[] messages = fra.search(EmailSearcher.soekAvsender(avsender));
-            System.out.println(messages.length);
-
-
+            for(Message m : messages){
+                meldinger.add(m);
+                m.setFlag(Flags.Flag.DELETED, true);
+            }
+            Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
+            fraMappe.copyMessages(tempMeldinger, tilMappe);
+            fraMappe.expunge();
             fra.close(false);
             til.close(false);
-
-
         }catch (MessagingException e){
             e.printStackTrace();
         }
@@ -82,7 +83,7 @@ public class MailUtil {
             Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
             fraMappe.copyMessages(tempMeldinger, tilMappe);
             fraMappe.expunge();
-
+            fraMappe.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -103,6 +104,7 @@ public class MailUtil {
             System.out.println("Text: " + message.getContent().toString());
 
         }
+        emailFolder.close(false);
     }
     
 

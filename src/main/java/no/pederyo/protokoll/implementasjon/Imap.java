@@ -1,6 +1,7 @@
-package no.pederyo.protokoll;
+package no.pederyo.protokoll.implementasjon;
 
 import no.pederyo.Attributter;
+import no.pederyo.protokoll.IProtokoll;
 
 import javax.mail.*;
 import java.util.Properties;

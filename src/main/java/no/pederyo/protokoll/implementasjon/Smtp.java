@@ -1,7 +1,8 @@
-package no.pederyo.protokoll;
+package no.pederyo.protokoll.implementasjon;
 
 import no.pederyo.Attributter;
 import no.pederyo.modell.Mail;
+import no.pederyo.protokoll.IProtokoll;
 
 import javax.mail.*;
 import javax.mail.internet.AddressException;
