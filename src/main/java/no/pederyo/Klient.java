@@ -10,8 +10,11 @@ import javax.mail.Store;
 
 public class Klient {
     public static void main(String[] args) throws MessagingException {
-        Imap imap = new Imap();
-        MailUtil.organiserInbox(imap, "Kvitteringer");
+        MailUtil mailUtil = new MailUtil();
+        System.out.println(mailUtil.hentUlestMail().length);
+        //MailUtil.status(imap);
+        //MailUtil.lytter(imap);
+        //MailUtil.organiserInbox(imap, "Kvitteringer");
         //MailUtil.checkInbox(imap);
         //MailUtil.check(imap);
 
