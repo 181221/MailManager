@@ -1,9 +1,7 @@
 package no.pederyo.mailmanager;
-
 import javax.mail.*;
+import javax.mail.Flags.Flag;
 import javax.mail.search.FlagTerm;
-import java.io.IOException;
-import java.util.*;
 
 public class MailUtil {
 
@@ -26,7 +24,7 @@ public class MailUtil {
         Message[] messages = null;
         try {
             folder.open(Folder.READ_ONLY);
-            messages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+            messages = folder.search(new FlagTerm(new Flags(Flag.SEEN), false));
             folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -35,41 +33,29 @@ public class MailUtil {
     }
 
     public boolean flyttMeldinger(Folder fraMappe, Folder tilMappe, Message[] messages){
-        List<Message> meldinger = new ArrayList();
         Boolean flyttet = false;
-        if(kanFlyttes(fraMappe, tilMappe, messages)){
+        if( kanFlyttes(fraMappe, tilMappe, messages) ) {
             try {
-                if(fraMappe.exists() && tilMappe.exists()){
-                    fraMappe.open(Folder.READ_WRITE);
-                    tilMappe.open(Folder.READ_WRITE);
+                if( fraMappe.exists() && tilMappe.exists() ) {
 
-                    for(Message m : messages){
-                        meldinger.add(m);
-                        m.setFlag(Flags.Flag.DELETED, true);
-                    }
+                    SetFlags(fraMappe, messages);
 
-                    Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
-                    fraMappe.copyMessages(tempMeldinger, tilMappe);
+                    fraMappe.copyMessages(messages, tilMappe);
 
-                    fraMappe.expunge();
+                    fraMappe.expunge(); // Sletter mail med flag: DELETE.
 
-                    fraMappe.close(false);
-                    tilMappe.close(false);
+                    lukk(fraMappe, tilMappe);
+
                     flyttet = true;
                 }
-
-            }catch (MessagingException e){
+            }catch ( MessagingException e ){
                 e.printStackTrace();
             }
         }
         return flyttet;
     }
 
-    private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message[] messages){
-        return fraMappe != null && tilMappe != null && messages != null && messages.length > 0;
-    }
-
-    public void visMail(Message[] messages){
+    public void printUt(Message[] messages){
         if(messages.length > 0){
             Folder folder = messages[0].getFolder();
             if(!folder.isOpen()){
@@ -85,6 +71,22 @@ public class MailUtil {
                 }
             }
         }
+    }
+
+    // -------------------- HJELPE METODER --------------------
+
+    private void SetFlags(Folder fraMappe, Message[] messages) throws MessagingException {
+        fraMappe.open(Folder.READ_WRITE);
+        fraMappe.setFlags(messages, new Flags(Flag.DELETED), true);
+    }
+
+    private void lukk(Folder m, Folder m2) throws MessagingException {
+        m.close(false);
+        m2.close(false);
+    }
+
+    private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message[] messages){
+        return fraMappe != null && tilMappe != null && messages != null && messages.length > 0;
     }
 
 

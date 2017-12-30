@@ -20,7 +20,7 @@ public class Pop3 implements IProtokoll, IConnect {
 
     public Properties setup() {
         Properties properties = new Properties();
-        properties.put("mail.pop3.host", Attributter.POP3HOST);
+        properties.put("mail.pop3.host", Attributter.POP_GMAIL_COM);
         properties.put("mail.pop3.port", "995");
         properties.put("mail.pop3.starttls.enable", "true");
         return properties;
@@ -38,7 +38,7 @@ public class Pop3 implements IProtokoll, IConnect {
 
     public void connect() {
         try {
-            store.connect(Attributter.POP3HOST,Attributter.FRAMAIL, Attributter.PASSORD);
+            store.connect(Attributter.POP_GMAIL_COM,Attributter.FRAMAIL, Attributter.PASSORD);
         } catch (MessagingException e) {
             e.printStackTrace();
         }

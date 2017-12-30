@@ -21,7 +21,7 @@ public class Smtp implements IProtokoll {
     }
     public Properties setup() {
         Properties props = new Properties();
-        props.put("mail.smtp.host", Attributter.SMTPHOST);
+        props.put("mail.smtp.host", Attributter.SMTP_GMAIL_COM);
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");

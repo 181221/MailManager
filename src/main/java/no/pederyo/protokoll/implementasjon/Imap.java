@@ -19,7 +19,7 @@ public class Imap implements IProtokoll, IConnect {
     }
     public Properties setup() {
         Properties props = System.getProperties();
-        props.setProperty("mail.imap.host", Attributter.IMAPHOST);
+        props.setProperty("mail.imap.host", Attributter.IMAP_GMAIL_COM);
         props.setProperty("mail.imap.port", "993");
         props.setProperty("mail.imap.connectiontimeout", "5000");
         props.setProperty("mail.imap.ssl.enable", "true");
@@ -42,7 +42,7 @@ public class Imap implements IProtokoll, IConnect {
     }
     public void connect() {
         try {
-            store.connect(Attributter.IMAPHOST, Attributter.FRAMAIL, Attributter.PASSORD);
+            store.connect(Attributter.IMAP_GMAIL_COM, Attributter.FRAMAIL, Attributter.PASSORD);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
