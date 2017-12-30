@@ -8,18 +8,38 @@ import javax.mail.*;
 import java.util.Properties;
 
 public class Imap implements IProtokoll, IConnect {
-    Properties properties;
-    Session session;
-    Store store;
 
-    public Imap() {
+    private static final String  IMAP_GMAIL_COM = "imap.gmail.com",
+            IMAP_OUTLOOK_COM = "imap-mail.outlook.com",
+            IMAP_YAHOO_COM = "imap.mail.yahoo.com",
+            IMAP_DEFAULT = IMAP_GMAIL_COM;
+
+    private static final String[] HOST = new String[] {
+            IMAP_GMAIL_COM,
+            IMAP_OUTLOOK_COM,
+            IMAP_YAHOO_COM};
+
+    private Properties properties;
+    private Session session;
+    private Store store;
+    private String mailType;
+
+    public Imap(){
         properties = setup();
         session = authenticate();
         store = store();
     }
+
+    public Imap(String mailType) {
+        properties = setup();
+        session = authenticate();
+        store = store();
+        this.mailType = finnHost(mailType);
+    }
+
     public Properties setup() {
         Properties props = System.getProperties();
-        props.setProperty("mail.imap.host", Attributter.IMAP_GMAIL_COM);
+        props.setProperty("mail.imap.host", mailType != null ? mailType : IMAP_DEFAULT);
         props.setProperty("mail.imap.port", "993");
         props.setProperty("mail.imap.connectiontimeout", "5000");
         props.setProperty("mail.imap.ssl.enable", "true");
@@ -40,13 +60,15 @@ public class Imap implements IProtokoll, IConnect {
         }
         return store;
     }
+
     public void connect() {
         try {
-            store.connect(Attributter.IMAP_GMAIL_COM, Attributter.FRAMAIL, Attributter.PASSORD);
+            store.connect(mailType, Attributter.FRAMAIL, Attributter.PASSORD);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
+
     public void close() {
         try {
             store.close();
@@ -54,6 +76,7 @@ public class Imap implements IProtokoll, IConnect {
             e.printStackTrace();
         }
     }
+
     public Folder getMappe(String mappe){
         Folder folder = null;
         if(mappe != null){
@@ -66,6 +89,7 @@ public class Imap implements IProtokoll, IConnect {
         }
         return folder;
     }
+
     public void checkInbox() {
         try {
             Folder inbox = store.getFolder("Inbox");
@@ -76,5 +100,16 @@ public class Imap implements IProtokoll, IConnect {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String finnHost(String sokestreng) {
+        for (String h : HOST) {
+            if(h != null){
+                if(h.equals(sokestreng)){
+                    return h;
+                }
+            }
+        }
+        return null;
     }
 }

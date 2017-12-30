@@ -1,10 +1,18 @@
 package no.pederyo.mailmanager;
 
+import no.pederyo.Attributter;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
 public class SokeOrd {
+
     private HashSet<String> ordliste;
+
+    public  SokeOrd(){
+        ordliste = new HashSet<String>();
+        ordliste.addAll(Arrays.asList(Attributter.SOKEORD));
+    }
 
     public SokeOrd(String[] liste){
         ordliste = new HashSet<String>();

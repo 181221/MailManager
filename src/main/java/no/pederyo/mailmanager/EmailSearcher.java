@@ -9,6 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EmailSearcher {
+    private SokeOrd sokeOrd;
+
+    public EmailSearcher(SokeOrd sokeOrd) {
+        this.sokeOrd = sokeOrd;
+    }
 
     public static Message[] hentMeldingerTilAvsender(Folder folder, String avsender){
         Message[] meldinger = null;

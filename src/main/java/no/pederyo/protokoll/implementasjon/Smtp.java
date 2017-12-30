@@ -11,7 +11,17 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class Smtp implements IProtokoll {
+    private static final String SMTP_GMAIL_COM = "smtp.gmail.com",
+            SMTP_OUTLOOK_COM = "smtp-mail.outlook.com",
+            SMTP_YAHOO_COM = "smtp.mail.yahoo.com",
+            SMTP_DEFAULT = SMTP_GMAIL_COM;
 
+    private static final String[] HOST = new String[] {
+            SMTP_GMAIL_COM,
+            SMTP_OUTLOOK_COM,
+            SMTP_YAHOO_COM};
+
+    private String mailType;
     private Properties properties;
     private Session session;
 
@@ -19,9 +29,16 @@ public class Smtp implements IProtokoll {
         properties = setup();
         session = authenticate();
     }
+
+    public Smtp(String mailType){
+        properties = setup();
+        session = authenticate();
+        this.mailType = finnHost(mailType);
+    }
+
     public Properties setup() {
         Properties props = new Properties();
-        props.put("mail.smtp.host", Attributter.SMTP_GMAIL_COM);
+        props.put("mail.smtp.host", mailType != null ? mailType : SMTP_DEFAULT);
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -56,5 +73,15 @@ public class Smtp implements IProtokoll {
             mail.setResult(e.getMessage());
         }
         return mail.getResult();
+    }
+    private static String finnHost(String sokestreng) {
+        for (String h : HOST) {
+            if(h != null){
+                if(h.equals(sokestreng)){
+                    return h;
+                }
+            }
+        }
+        return null;
     }
 }
