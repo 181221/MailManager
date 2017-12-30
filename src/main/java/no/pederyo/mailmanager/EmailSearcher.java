@@ -5,17 +5,18 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.search.SearchTerm;
-import java.util.HashSet;
-import java.util.Set;
 
 public class EmailSearcher {
-    private SokeOrd sokeOrd;
 
-    public EmailSearcher(SokeOrd sokeOrd) {
+    private SokeOrd sokeOrd;
+    private Folder folder;
+
+    public EmailSearcher(SokeOrd sokeOrd, Folder folder) {
         this.sokeOrd = sokeOrd;
+        this.folder = folder;
     }
 
-    public static Message[] hentMeldingerTilAvsender(Folder folder, String avsender){
+    public Message[] hentMeldingerTilAvsender(String avsender){
         Message[] meldinger = null;
         try {
             folder.open(Folder.READ_ONLY);
@@ -26,11 +27,11 @@ public class EmailSearcher {
         return meldinger;
     }
 
-    public static Message[] hentMeldingerFraSokeListe(Folder folder, HashSet<String> ordliste){
+    public Message[] hentMeldingerFraSokeListe(){
         Message[] meldinger = null;
         try {
             folder.open(Folder.READ_ONLY);
-            meldinger = folder.search(soekEtterMeldinger(ordliste));
+            meldinger = folder.search(soekEtterMeldinger());
             folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -38,13 +39,12 @@ public class EmailSearcher {
         return meldinger;
     }
 
-    private static SearchTerm soekAvsender(final String fraEmail){
+    private SearchTerm soekAvsender(final String fraEmail){
         SearchTerm searchCondition = new SearchTerm() {
             @Override
             public boolean match(Message message) {
                 try {
                     Address[] fromAddress = message.getFrom();
-                    System.out.println(message.getAllRecipients()[0].toString());
                     if (fromAddress != null && fromAddress.length > 0) {
                         if (fromAddress[0].toString().contains(fraEmail)) {
                             return true;
@@ -59,7 +59,7 @@ public class EmailSearcher {
         return searchCondition;
     }
 
-    private static SearchTerm soekEtterMeldinger(final Set<String> ordliste){
+    private SearchTerm soekEtterMeldinger(){
         SearchTerm searchCondition = new SearchTerm() {
             @Override
             public boolean match(Message message) {
@@ -68,7 +68,7 @@ public class EmailSearcher {
                     if (subject != null) {
                         String[] sub = subject.split(" ");
                         for(int i = 0; i < sub.length; i++) {
-                            if (ordliste.contains(sub[i])) {
+                            if (sokeOrd.getOrdliste().contains(sub[i])) {
                                 return true;
                             }
                         }
@@ -80,5 +80,13 @@ public class EmailSearcher {
             }
         };
         return searchCondition;
+    }
+
+    public SokeOrd getSokeOrd() {
+        return sokeOrd;
+    }
+
+    public Folder getFolder() {
+        return folder;
     }
 }
