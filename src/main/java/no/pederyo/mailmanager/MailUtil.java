@@ -33,14 +33,20 @@ public class MailUtil {
         }
         return messages;
     }
-    public void visUlestMail(Message[] messages){
-        for ( Message message : messages ) {
-            try {
-                System.out.println(
-                        "sendDate: " + message.getSentDate()
-                                + " subject:" + message.getSubject() );
-            } catch (MessagingException e) {
-                e.printStackTrace();
+    public void visMail(Message[] messages){
+        if(messages.length > 0){
+            Folder folder = messages[0].getFolder();
+            if(!folder.isOpen()){
+                try {
+                    folder.open(Folder.READ_ONLY);
+                    for ( Message message : messages ) {
+                            System.out.println("sendDate: " + message.getSentDate() +
+                                    " subject: " + message.getSubject() );
+                    }
+                    folder.close();
+                }catch (MessagingException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
