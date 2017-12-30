@@ -1,12 +1,13 @@
 package no.pederyo.protokoll.implementasjon;
 
 import no.pederyo.Attributter;
+import no.pederyo.protokoll.IConnect;
 import no.pederyo.protokoll.IProtokoll;
 
 import javax.mail.*;
 import java.util.Properties;
 
-public class Imap implements IProtokoll {
+public class Imap implements IProtokoll, IConnect {
     Properties properties;
     Session session;
     Store store;

@@ -1,11 +1,12 @@
 package no.pederyo.protokoll.implementasjon;
 
 import no.pederyo.Attributter;
+import no.pederyo.protokoll.IConnect;
 import no.pederyo.protokoll.IProtokoll;
 
 import javax.mail.*;
 import java.util.Properties;
-public class Pop3 implements IProtokoll {
+public class Pop3 implements IProtokoll, IConnect {
 
     private Properties properties;
     private Store store;
@@ -14,7 +15,7 @@ public class Pop3 implements IProtokoll {
     public Pop3(){
         properties = setup();
         session = authenticate();
-        store = Store();
+        store = store();
     }
 
     public Properties setup() {
@@ -35,10 +36,6 @@ public class Pop3 implements IProtokoll {
                 });
     }
 
-    public Store store() {
-        return null;
-    }
-
     public void connect() {
         try {
             store.connect(Attributter.POP3HOST,Attributter.FRAMAIL, Attributter.PASSORD);
@@ -55,7 +52,7 @@ public class Pop3 implements IProtokoll {
         }
     }
 
-    private Store Store(){
+    public Store store(){
         Store store = null;
         try {
             store = session.getStore("pop3s");
@@ -64,17 +61,4 @@ public class Pop3 implements IProtokoll {
         }
         return store;
     }
-
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public Store getStore() {
-        return store;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
 }

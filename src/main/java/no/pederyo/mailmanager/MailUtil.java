@@ -33,7 +33,7 @@ public class MailUtil {
         }
         return messages;
     }
-    public static void visUlestMail(Message[] messages){
+    public void visUlestMail(Message[] messages){
         for ( Message message : messages ) {
             try {
                 System.out.println(
@@ -89,7 +89,7 @@ public class MailUtil {
         }
     }
 
-    private static void printUtMeldingerTilMappe(Folder emailFolder) throws MessagingException, IOException {
+    private void printUtMeldingerTilMappe(Folder emailFolder) throws MessagingException, IOException {
         emailFolder.open(Folder.READ_ONLY);
         emailFolder.getFullName();
         Message[] messages = emailFolder.getMessages();

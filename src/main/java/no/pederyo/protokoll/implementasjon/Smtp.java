@@ -41,18 +41,6 @@ public class Smtp implements IProtokoll {
         });
     }
 
-    public Store store() {
-        return null;
-    }
-
-    public void connect() {
-
-    }
-
-    public void close() {
-
-    }
-
     public String send(Mail mail) {
         try {
             MimeMessage message = new MimeMessage(session);

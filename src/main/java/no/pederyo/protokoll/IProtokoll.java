@@ -10,9 +10,4 @@ public interface IProtokoll {
 
     Session authenticate();
 
-    Store store();
-
-    void connect();
-
-    void close();
 }
