@@ -1,14 +1,19 @@
 package no.pederyo.mailmanager;
+
 import javax.mail.*;
 import javax.mail.Flags.Flag;
 import javax.mail.search.FlagTerm;
 
 public class MailUtil {
+    Folder folder;
 
-    public Message[] hentAlleMail(Folder mappe){
+    public MailUtil(Folder folder){
+        this.folder = folder;
+    }
+
+    public Message[] hentAlleMail(){
         Message[] messages = null;
         try {
-            Folder folder = mappe;
             folder.open(Folder.READ_ONLY);
             messages = folder.getMessages();
             folder.close();
@@ -20,7 +25,7 @@ public class MailUtil {
         return messages;
     }
 
-    public Message[] hentUlestMail(Folder folder){
+    public Message[] hentUlestMail(){
         Message[] messages = null;
         try {
             folder.open(Folder.READ_ONLY);
@@ -32,19 +37,19 @@ public class MailUtil {
         return messages;
     }
 
-    public boolean flyttMeldinger(Folder fraMappe, Folder tilMappe, Message[] messages){
+    public boolean flyttMeldinger(Folder tilMappe, Message[] messages){
         Boolean flyttet = false;
-        if( kanFlyttes(fraMappe, tilMappe, messages) ) {
+        if( kanFlyttes( folder, tilMappe, messages) ) {
             try {
-                if( fraMappe.exists() && tilMappe.exists() ) {
+                if( folder.exists() && tilMappe.exists() ) {
 
-                    SetFlags(fraMappe, messages);
+                    SetFlags(messages);
 
-                    fraMappe.copyMessages(messages, tilMappe);
+                    folder.copyMessages(messages, tilMappe);
 
-                    fraMappe.expunge(); // Sletter mail med flag: DELETE.
+                    folder.expunge(); // Sletter mail med flag: DELETE.
 
-                    lukk(fraMappe, tilMappe);
+                    lukk(folder, tilMappe);
 
                     flyttet = true;
                 }
@@ -75,9 +80,9 @@ public class MailUtil {
 
     // -------------------- HJELPE METODER --------------------
 
-    private void SetFlags(Folder fraMappe, Message[] messages) throws MessagingException {
-        fraMappe.open(Folder.READ_WRITE);
-        fraMappe.setFlags(messages, new Flags(Flag.DELETED), true);
+    private void SetFlags(Message[] messages) throws MessagingException {
+        folder.open(Folder.READ_WRITE);
+        folder.setFlags(messages, new Flags(Flag.DELETED), true);
     }
 
     private void lukk(Folder m, Folder m2) throws MessagingException {

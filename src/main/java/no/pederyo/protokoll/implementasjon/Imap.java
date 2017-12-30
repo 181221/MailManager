@@ -77,7 +77,7 @@ public class Imap implements IProtokoll, IConnect {
         }
     }
 
-    public Folder getMappe(String mappe){
+    public Folder getFolder(String mappe){
         Folder folder = null;
         if(mappe != null){
             try {
