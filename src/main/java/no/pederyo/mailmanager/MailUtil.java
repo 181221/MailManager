@@ -7,7 +7,7 @@ import java.util.*;
 
 public class MailUtil {
 
-    public Message[] hentAlleMailTilMappe(Folder mappe){
+    public Message[] hentAlleMail(Folder mappe){
         Message[] messages = null;
         try {
             Folder folder = mappe;
@@ -33,6 +33,42 @@ public class MailUtil {
         }
         return messages;
     }
+
+    public boolean flyttMeldinger(Folder fraMappe, Folder tilMappe, Message[] messages){
+        List<Message> meldinger = new ArrayList();
+        Boolean flyttet = false;
+        if(kanFlyttes(fraMappe, tilMappe, messages)){
+            try {
+                if(fraMappe.exists() && tilMappe.exists()){
+                    fraMappe.open(Folder.READ_WRITE);
+                    tilMappe.open(Folder.READ_WRITE);
+
+                    for(Message m : messages){
+                        meldinger.add(m);
+                        m.setFlag(Flags.Flag.DELETED, true);
+                    }
+
+                    Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
+                    fraMappe.copyMessages(tempMeldinger, tilMappe);
+
+                    fraMappe.expunge();
+
+                    fraMappe.close(false);
+                    tilMappe.close(false);
+                    flyttet = true;
+                }
+
+            }catch (MessagingException e){
+                e.printStackTrace();
+            }
+        }
+        return flyttet;
+    }
+
+    private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message[] messages){
+        return fraMappe != null && tilMappe != null && messages != null && messages.length > 0;
+    }
+
     public void visMail(Message[] messages){
         if(messages.length > 0){
             Folder folder = messages[0].getFolder();
@@ -51,67 +87,6 @@ public class MailUtil {
         }
     }
 
-    public void flyttMeldingerFraAvsenderTilMappe(Folder fraMappe, Folder tilMappe, String avsender){
-        List<Message> meldinger = new ArrayList();
-        try{
-            Folder fra = fraMappe;
-            Folder til = tilMappe;
 
-            fra.open(Folder.READ_WRITE);
-            til.open(Folder.READ_WRITE);
-            Message[] messages = fra.search(EmailSearcher.soekAvsender(avsender));
-            for(Message m : messages){
-                meldinger.add(m);
-                m.setFlag(Flags.Flag.DELETED, true);
-            }
-            Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
-            fraMappe.copyMessages(tempMeldinger, tilMappe);
-            fraMappe.expunge();
-            fra.close(false);
-            til.close(false);
-        }catch (MessagingException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void flyttMeldingerFraTil(Folder fraMappe, Folder tilMappe, Set<String> VALUES) {
-        List<Message> meldinger = new ArrayList();
-        try {
-            fraMappe.open(Folder.READ_WRITE);
-            tilMappe.open(Folder.READ_WRITE);
-            for(Message m : fraMappe.getMessages()) {
-                String subject = m.getSubject().toLowerCase();
-                if(VALUES.contains(subject)) {
-                    meldinger.add(m);
-                    m.setFlag(Flags.Flag.DELETED, true);
-                }
-            }
-            Message[] tempMeldinger = meldinger.toArray(new Message[meldinger.size()]);
-            fraMappe.copyMessages(tempMeldinger, tilMappe);
-            fraMappe.expunge();
-            fraMappe.close(false);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void printUtMeldingerTilMappe(Folder emailFolder) throws MessagingException, IOException {
-        emailFolder.open(Folder.READ_ONLY);
-        emailFolder.getFullName();
-        Message[] messages = emailFolder.getMessages();
-        System.out.println("messages.length---" + messages.length);
-
-        for (int i = 0, n = messages.length; i < n; i++) {
-            Message message = messages[i];
-            System.out.println("---------------------------------");
-            System.out.println("Email Number " + (i + 1));
-            System.out.println("Subject: " + message.getSubject());
-            System.out.println("From: " + message.getFrom()[0]);
-            System.out.println("Text: " + message.getContent().toString());
-
-        }
-        emailFolder.close(false);
-    }
-    
 
 }

@@ -11,13 +11,13 @@ public class Klient {
         Imap imap = new Imap();
         imap.connect();
         Folder inbox = imap.getMappe("Inbox");
-
-        SokeOrd sokeOrd = new SokeOrd(Attributter.SOKEORD);
-
         MailUtil mailUtil = new MailUtil();
 
-        Message[] m = mailUtil.hentAlleMailTilMappe(inbox);
-        mailUtil.visMail(m);
+        //Folder kvitteringer = imap.getMappe("Kvitteringer");
+        SokeOrd sokeOrd = new SokeOrd(Attributter.SOKEORD);
+
+        mailUtil.visMail(EmailSearcher.hentMeldingerFraSokeListe(inbox, sokeOrd.getOrdliste()));
+        //mailUtil.flyttMeldinger(inbox, kvitteringer, meldinger);
 
         imap.close();
 
