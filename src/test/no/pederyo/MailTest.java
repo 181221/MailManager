@@ -1,14 +1,11 @@
 package no.pederyo;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
-import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import no.pederyo.stub.ImapStub;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -33,7 +30,7 @@ public class MailTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
-    ImapStub imapStub;
+    private ImapStub imapStub;
 
     @Before
     public void setup(){

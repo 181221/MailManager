@@ -112,4 +112,17 @@ public class Imap implements IProtokoll, IConnect {
         }
         return null;
     }
+
+    public Folder opprettFolder(String navn){
+        Folder nyfolder = null;
+        try {
+            nyfolder = store.getFolder(navn);
+            nyfolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return nyfolder;
+    }
+
+
 }

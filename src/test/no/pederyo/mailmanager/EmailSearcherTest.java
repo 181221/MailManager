@@ -1,11 +1,9 @@
-package no.pederyo;
+package no.pederyo.mailmanager;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import no.pederyo.mailmanager.EmailSearcher;
-import no.pederyo.mailmanager.SokeOrd;
+import no.pederyo.stub.ImapStub;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,7 +11,6 @@ import org.junit.Test;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 import static org.junit.Assert.assertTrue;
 
@@ -21,18 +18,19 @@ import static org.junit.Assert.assertTrue;
  * Created by Peder on 31.12.2017.
  */
 public class EmailSearcherTest {
-    private static final String EMAIL = "test@hvl.no", LOGIN = "hvl", PASSORD = "pass";
-
     private final String subject = GreenMailUtil.random();
     private final String body = GreenMailUtil.random();
 
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
-    ImapStub imap;
+
+    private ImapStub imap;
+
     @Before
     public void setup(){
         imap = new ImapStub(greenMail);
     }
+
     @Test
     public void testFinnerMailPaSubject() {
         SokeOrd sokeOrd = new SokeOrd();
@@ -57,5 +55,19 @@ public class EmailSearcherTest {
         msg = es.hentMeldingerFraSokeListe();
         assertTrue(msg.length == 7);
     }
+
+    @Test
+    public void testOpprettMappe() throws MessagingException {
+        imap.sendMeld("Test", "test");
+        assertTrue(imap.hentFolder("INBOX").exists());
+
+        Folder nyfolder = imap.opprettFolder("Kvitteringer");
+        Folder[] alleimap = imap.getStore().getDefaultFolder().list();
+
+        assertTrue(alleimap.length == 2);
+        assertTrue(nyfolder.exists());
+    }
+
+
 
 }
