@@ -62,14 +62,7 @@ public class EmailSearcher {
             public boolean match(Message message) {
                 try {
                     String subject = message.getSubject().toLowerCase();
-                    if (subject != null) {
-                        String[] sub = subject.split(" ");
-                        for(int i = 0; i < sub.length; i++) {
-                            if (sokeOrd.getOrdliste().contains(sub[i])) {
-                                return true;
-                            }
-                        }
-                    }
+                    subjectExists(subject);
                 } catch (MessagingException ex) {
                     ex.printStackTrace();
                 }
@@ -77,6 +70,20 @@ public class EmailSearcher {
             }
         };
         return searchCondition;
+    }
+
+    public boolean subjectExists(String tittel){
+        String subject = tittel.toLowerCase();
+        if (subject != null) {
+            String[] sub = subject.split(" ");
+            for(int i = 0; i < sub.length; i++) {
+                if (sokeOrd.getOrdliste().contains(sub[i])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
     }
 
     public SokeOrd getSokeOrd() {

@@ -1,6 +1,7 @@
 package no.pederyo.Lytter;
 
 import com.sun.mail.imap.IMAPFolder;
+import no.pederyo.mailmanager.EmailSearcher;
 
 import javax.mail.*;
 import javax.mail.event.MessageCountAdapter;
@@ -8,12 +9,14 @@ import javax.mail.event.MessageCountEvent;
 import java.util.Arrays;
 
 public class Lytter implements Runnable {
-    Folder folder;
-    int freq;
+    private Folder folder;
+    private int freq;
+    private EmailSearcher emailSearcher;
 
-    public Lytter(Folder folder, int freq) {
+    public Lytter(Folder folder, int freq, EmailSearcher emailSearcher) {
         this.folder = folder;
         this.freq = freq;
+        this.emailSearcher = emailSearcher;
     }
 
     public void run() {
@@ -38,7 +41,11 @@ public class Lytter implements Runnable {
 
                     try {
                         Address[] address = msgs[i].getFrom();
-                        System.out.println("Tittel " + msgs[i].getSubject()
+                        String subject = msgs[i].getSubject();
+                        if(emailSearcher.subjectExists(subject)){
+                            System.out.println("Det eksisterer");
+                        }
+                        System.out.println("Tittel " + subject
                                 + " Fra " + Arrays.toString(address)
                                 + " Sendt " + msgs[i].getSentDate());
                     } catch (MessagingException e) {

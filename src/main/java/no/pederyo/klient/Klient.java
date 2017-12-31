@@ -23,21 +23,19 @@ public class Klient {
 
             inbox.open(Folder.READ_WRITE);
 
-            Lytter lytter = new Lytter(inbox, 60000);
+            EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, inbox);
+
+            Lytter lytter = new Lytter(inbox, 60000, emailSearcher);
 
             Thread thread = new Thread(lytter);
 
             thread.start();
 
-            Folder f = inbox;
-
-            EmailSearcher es = new EmailSearcher(sokeOrd, f);
-
-            es.hentMeldingerFraSokeListe();
+            emailSearcher.hentMeldingerFraSokeListe();
 
             MailUtil mailUtil = new MailUtil(inbox);
 
-            mailUtil.printUt(es.hentMeldingerFraSokeListe());
+            mailUtil.printUt(emailSearcher.hentMeldingerFraSokeListe());
 
     }
 }
