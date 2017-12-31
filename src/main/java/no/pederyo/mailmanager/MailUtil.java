@@ -6,6 +6,12 @@ import javax.mail.search.FlagTerm;
 
 public class MailUtil {
     Folder folder;
+    public Folder tilmappe;
+
+    public MailUtil(Folder folder, Folder tilmappe){
+        this.folder =folder;
+        this.tilmappe = tilmappe;
+    }
 
     public MailUtil(Folder folder){
         this.folder = folder;
@@ -14,9 +20,7 @@ public class MailUtil {
     public Message[] hentAlleMail(){
         Message[] messages = null;
         try {
-            folder.open(Folder.READ_ONLY);
             messages = folder.getMessages();
-            folder.close();
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (NullPointerException e){
@@ -28,9 +32,7 @@ public class MailUtil {
     public Message[] hentUlestMail(){
         Message[] messages = null;
         try {
-            folder.open(Folder.READ_ONLY);
             messages = folder.search(new FlagTerm(new Flags(Flag.SEEN), false));
-            folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -47,9 +49,7 @@ public class MailUtil {
 
                     folder.copyMessages(messages, tilMappe);
 
-                    folder.expunge(); // Sletter mail med flag: DELETE.
-
-                    lukk(folder, tilMappe);
+                    //folder.expunge(); // Sletter mail med flag: DELETE.
 
                     flyttet = true;
                 }
@@ -66,12 +66,15 @@ public class MailUtil {
             if(!folder.isOpen()){
                 try {
                     folder.open(Folder.READ_ONLY);
-                    for ( Message message : messages ) {
-                            System.out.println("sendDate: " + message.getSentDate() +
-                                    " subject: " + message.getSubject() );
-                    }
-                    folder.close();
-                }catch (MessagingException e) {
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+            for ( Message message : messages ) {
+                try {
+                    System.out.println("sendDate: " + message.getSentDate() +
+                            " subject: " + message.getSubject() );
+                } catch (MessagingException e) {
                     e.printStackTrace();
                 }
             }
@@ -81,8 +84,10 @@ public class MailUtil {
     // -------------------- HJELPE METODER --------------------
 
     private void SetFlags(Message[] messages) throws MessagingException {
-        folder.open(Folder.READ_WRITE);
         folder.setFlags(messages, new Flags(Flag.DELETED), true);
+    }
+    private void SetFlagDelete(Message message) throws MessagingException {
+       message.setFlag(Flag.DELETED, true);
     }
 
     private void lukk(Folder m, Folder m2) throws MessagingException {
@@ -92,6 +97,9 @@ public class MailUtil {
 
     private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message[] messages){
         return fraMappe != null && tilMappe != null && messages != null && messages.length > 0;
+    }
+    private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message messages){
+        return fraMappe != null && tilMappe != null && messages != null ;
     }
 
 

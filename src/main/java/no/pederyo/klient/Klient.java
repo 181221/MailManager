@@ -8,6 +8,7 @@ import no.pederyo.protokoll.implementasjon.Imap;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
+import java.util.Arrays;
 
 public class Klient {
 
@@ -15,17 +16,19 @@ public class Klient {
 
             Imap imap = new Imap();
 
-            imap.connect();
-
             SokeOrd sokeOrd = new SokeOrd();
 
             Folder inbox = imap.getFolder("INBOX");
+
+            Folder Kvitteringer = imap.getFolder("Kvitteringer");
 
             inbox.open(Folder.READ_WRITE);
 
             EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, inbox);
 
-            Lytter lytter = new Lytter(inbox, 60000, emailSearcher);
+            MailUtil mailUtil = new MailUtil(inbox, Kvitteringer);
+
+            Lytter lytter = new Lytter(inbox, 60000, emailSearcher, mailUtil);
 
             Thread thread = new Thread(lytter);
 
@@ -33,7 +36,6 @@ public class Klient {
 
             emailSearcher.hentMeldingerFraSokeListe();
 
-            MailUtil mailUtil = new MailUtil(inbox);
 
             mailUtil.printUt(emailSearcher.hentMeldingerFraSokeListe());
 

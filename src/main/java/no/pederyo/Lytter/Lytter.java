@@ -2,21 +2,25 @@ package no.pederyo.Lytter;
 
 import com.sun.mail.imap.IMAPFolder;
 import no.pederyo.mailmanager.EmailSearcher;
+import no.pederyo.mailmanager.MailUtil;
 
 import javax.mail.*;
 import javax.mail.event.MessageCountAdapter;
 import javax.mail.event.MessageCountEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Lytter implements Runnable {
     private Folder folder;
     private int freq;
     private EmailSearcher emailSearcher;
+    private MailUtil mailUtil;
 
-    public Lytter(Folder folder, int freq, EmailSearcher emailSearcher) {
+    public Lytter(Folder folder, int freq, EmailSearcher emailSearcher, MailUtil mailUtil) {
         this.folder = folder;
         this.freq = freq;
         this.emailSearcher = emailSearcher;
+        this.mailUtil = mailUtil;
     }
 
     public void run() {
@@ -36,18 +40,20 @@ public class Lytter implements Runnable {
                 System.out.println("Got " + msgs.length + " new messages");
                 // Just dump out the new messages
                 for (int i = 0; i < msgs.length; i++) {
+                    Message msg = msgs[i];
                     System.out.println("-----");
-                    System.out.println("Message " + msgs[i].getMessageNumber() + ":");
-
+                    System.out.println("Message " + msg.getMessageNumber() + ":");
                     try {
                         Address[] address = msgs[i].getFrom();
                         String subject = msgs[i].getSubject();
-                        if(emailSearcher.subjectExists(subject)){
-                            System.out.println("Det eksisterer");
-                        }
                         System.out.println("Tittel " + subject
                                 + " Fra " + Arrays.toString(address)
                                 + " Sendt " + msgs[i].getSentDate());
+                        if(emailSearcher.subjectExists(subject)){
+                            System.out.println("Det eksisterer");
+                            mailUtil.flyttMeldinger(mailUtil.tilmappe, new Message[]{msg});
+                        }
+
                     } catch (MessagingException e) {
                         e.printStackTrace();
                     }

@@ -28,13 +28,15 @@ public class Imap implements IProtokoll, IConnect {
         properties = setup();
         session = authenticate();
         store = store();
+        connect();
     }
 
     public Imap(String mailType) {
+        this.mailType = finnHost(mailType);
         properties = setup();
         session = authenticate();
         store = store();
-        this.mailType = finnHost(mailType);
+        connect();
     }
 
     public Properties setup() {
@@ -81,6 +83,9 @@ public class Imap implements IProtokoll, IConnect {
         Folder folder = null;
         if(mappe != null){
             try {
+                if(!store.isConnected()){
+                    connect();
+                }
                 folder = store.getFolder(mappe);
             }catch (MessagingException e){
                 e.printStackTrace();
@@ -89,8 +94,22 @@ public class Imap implements IProtokoll, IConnect {
         }
         return folder;
     }
+    public Folder[] getAllFolders(){
+        try {
+            if(!store.isConnected()){
+                connect();
+            }
+            return store.getDefaultFolder().list("*");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void checkInbox() {
+        if(!store.isConnected()){
+            connect();
+        }
         try {
             Folder inbox = store.getFolder("Inbox");
             inbox.open(Folder.READ_WRITE);
@@ -115,6 +134,9 @@ public class Imap implements IProtokoll, IConnect {
 
     public Folder opprettFolder(String navn){
         Folder nyfolder = null;
+        if(!store.isConnected()){
+            connect();
+        }
         try {
             nyfolder = store.getFolder(navn);
             nyfolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
