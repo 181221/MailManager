@@ -68,6 +68,11 @@ public class EmailSearcherTest {
         assertTrue(nyfolder.exists());
     }
 
+    @Test
+    public void testHentMeldingerTilAvsender(){
+        //todo
+    }
+
 
 
 }

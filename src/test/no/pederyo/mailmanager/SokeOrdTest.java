@@ -21,11 +21,11 @@ public class SokeOrdTest {
 
     @Test
     public void TestleggTilSokeOrd(){
-
+        //todo
     }
 
     @Test
     public void TestleggTilSokeOrdListe(){
-
+        //todo
     }
 }

@@ -67,6 +67,5 @@ public class MailTest {
         assertTrue(f.getMessageCount() == 1);
     }
 
-
 }
 
