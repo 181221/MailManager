@@ -31,7 +31,7 @@ public class EmailSearcher {
         Message[] meldinger = null;
         try {
             folder.open(Folder.READ_ONLY);
-            meldinger = folder.search(soekEtterMeldinger());
+            meldinger = folder.search(soekMailMedSubject());
             folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -59,7 +59,7 @@ public class EmailSearcher {
         return searchCondition;
     }
 
-    private SearchTerm soekEtterMeldinger(){
+    private SearchTerm soekMailMedSubject(){
         SearchTerm searchCondition = new SearchTerm() {
             @Override
             public boolean match(Message message) {

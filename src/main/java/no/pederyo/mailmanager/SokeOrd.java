@@ -20,7 +20,7 @@ public class SokeOrd {
     }
 
     public boolean leggTilSokeOrd(String ord){
-        return ordliste.add(ord);
+        return ordliste.add(ord.toLowerCase());
     }
 
     public boolean leggTilSokeOrd(String[] ord){

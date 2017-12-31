@@ -13,13 +13,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -46,42 +43,33 @@ public class MailTest {
 
     @Test
     public void testSendOgRecive() throws UnsupportedEncodingException, MessagingException, UserException {
+        greenMail.start();
         GreenMailUtil.sendTextEmailTest(LOGIN,
                 EMAIL, "subject", "body"); //replace this with your send code
         assertEquals("body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
-
     }
 
     @Test
     public void testRecive() throws MessagingException {
         greenMail.start();
-        sendTestTwoMails();
-        assertTrue(greenMail.waitForIncomingEmail(5000, 2));
+
+        imapStub.sendMeld("Heisann", "funk pls:");
+        Folder f = imapStub.hentFolder("INBOX");
+        assertTrue(f.getMessageCount() == 1);
         Message[] messages = greenMail.getReceivedMessages();
-        assertEquals(2, messages.length);
+        assertNotNull(messages);
+        assertEquals(messages[0].getSubject(),"Heisann");
+        assertEquals(1, messages.length);
     }
 
     @Test
     public void testInboxMotarMail() throws MessagingException {
         greenMail.start();
-        sendTestTwoMails();
+        imapStub.sendMeld(subject, body);
         Folder f = imapStub.hentFolder("INBOX");
-        assertTrue(f.getMessageCount() == 2);
+        assertTrue(f.getMessageCount() == 1);
     }
 
-    private void sendTestTwoMails() throws MessagingException {
-        GreenMailUtil.sendTextEmailTest(EMAIL, EMAIL, subject, body);
 
-        // Create multipart
-        MimeMultipart multipart = new MimeMultipart();
-        final MimeBodyPart part1 = new MimeBodyPart();
-        part1.setContent("body1", "text/plain");
-        multipart.addBodyPart(part1);
-        final MimeBodyPart part2 = new MimeBodyPart();
-        part2.setContent("body2", "text/plain");
-        multipart.addBodyPart(part2);
-
-        GreenMailUtil.sendMessageBody(EMAIL, EMAIL, subject + "__2", multipart, null, ServerSetupTest.SMTP);
-    }
 }
 

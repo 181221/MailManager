@@ -1,9 +1,13 @@
 package no.pederyo;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import no.pederyo.protokoll.IConnect;
 
 import javax.mail.*;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * Created by Peder on 31.12.2017.
@@ -56,9 +60,16 @@ public class ImapStub implements IConnect {
             folder = store.getFolder(type);
             folder.open(1);
             Message[] msg = folder.getMessages();
+            folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
         return folder;
     }
+    public void sendMeld(String subject, String melding) {
+        GreenMailUtil.sendTextEmail(EMAIL, EMAIL, subject,
+                melding,
+                greenMail.getSmtp().getServerSetup());
+    }
+
 }
