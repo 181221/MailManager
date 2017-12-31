@@ -1,10 +1,9 @@
 package no.pederyo.klient;
 
-import no.pederyo.Attributter;
+import no.pederyo.Lytter.Lytter;
 import no.pederyo.mailmanager.EmailSearcher;
 import no.pederyo.mailmanager.MailUtil;
 import no.pederyo.mailmanager.SokeOrd;
-import no.pederyo.modell.Mail;
 import no.pederyo.protokoll.implementasjon.Imap;
 
 import javax.mail.Folder;
@@ -22,7 +21,17 @@ public class Klient {
 
             Folder inbox = imap.getFolder("INBOX");
 
-            EmailSearcher es = new EmailSearcher(sokeOrd, inbox);
+            inbox.open(Folder.READ_WRITE);
+
+            Lytter lytter = new Lytter(inbox, 60000);
+
+            Thread thread = new Thread(lytter);
+
+            thread.start();
+
+            Folder f = inbox;
+
+            EmailSearcher es = new EmailSearcher(sokeOrd, f);
 
             es.hentMeldingerFraSokeListe();
 

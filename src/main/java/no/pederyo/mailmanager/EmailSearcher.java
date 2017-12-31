@@ -19,7 +19,6 @@ public class EmailSearcher {
     public Message[] hentMeldingerTilAvsender(String avsender){
         Message[] meldinger = null;
         try {
-            folder.open(Folder.READ_ONLY);
             meldinger = folder.search(soekAvsender(avsender));
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -30,9 +29,7 @@ public class EmailSearcher {
     public Message[] hentMeldingerFraSokeListe(){
         Message[] meldinger = null;
         try {
-            folder.open(Folder.READ_ONLY);
             meldinger = folder.search(soekMailMedSubject());
-            folder.close(false);
         } catch (MessagingException e) {
             e.printStackTrace();
         }

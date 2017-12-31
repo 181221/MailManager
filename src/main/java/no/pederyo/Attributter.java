@@ -1,6 +1,5 @@
 package no.pederyo;
 
-import java.util.*;
 
 public class Attributter {
     //       ----  Innlogging  ----
