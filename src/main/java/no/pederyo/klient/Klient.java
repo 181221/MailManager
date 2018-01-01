@@ -24,7 +24,7 @@ public class Klient {
 
             inbox.open(Folder.READ_WRITE);
 
-            EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, inbox);
+            EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, inbox, imap);
 
             MailUtil mailUtil = new MailUtil(inbox, Kvitteringer);
 

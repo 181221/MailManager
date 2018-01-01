@@ -1,5 +1,6 @@
 package no.pederyo.mailmanager;
 
+import no.pederyo.protokoll.IImap;
 import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -7,19 +8,24 @@ import javax.mail.MessagingException;
 import javax.mail.search.SearchTerm;
 
 public class EmailSearcher {
-
+    private IImap imap;
     private SokeOrd sokeOrd;
     private Folder folder;
 
-    public EmailSearcher(SokeOrd sokeOrd, Folder folder) {
+    public EmailSearcher(SokeOrd sokeOrd, Folder folder, IImap imap) {
         this.sokeOrd = sokeOrd;
+        this.imap =  imap;
         this.folder = folder;
     }
 
     public Message[] hentMeldingerTilAvsender(String avsender){
         Message[] meldinger = null;
         try {
-            meldinger = folder.search(soekAvsender(avsender));
+            Folder f = imap.getFolder(folder.getName());
+            if(!f.isOpen())
+                f.open(Folder.READ_WRITE);
+
+            meldinger = f.search(soekAvsender(avsender));
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -29,7 +35,11 @@ public class EmailSearcher {
     public Message[] hentMeldingerFraSokeListe(){
         Message[] meldinger = null;
         try {
-            meldinger = folder.search(soekMailMedSubject());
+            Folder f = imap.getFolder(folder.getName());
+            if(!f.isOpen())
+                f.open(Folder.READ_WRITE);
+
+            meldinger = f.search(soekMailMedSubject());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -92,6 +102,6 @@ public class EmailSearcher {
     }
 
     public Folder getFolder() {
-        return folder;
+        return imap.getFolder(folder.getName());
     }
 }
