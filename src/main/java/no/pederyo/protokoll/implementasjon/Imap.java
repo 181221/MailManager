@@ -80,19 +80,17 @@ public class Imap implements IProtokoll, IConnect {
     }
 
     public Folder getFolder(String mappe){
-        Folder folder = null;
         if(mappe != null){
             try {
                 if(!store.isConnected()){
                     connect();
                 }
-                folder = store.getFolder(mappe);
+                return store.getFolder(mappe);
             }catch (MessagingException e){
                 e.printStackTrace();
             }
-            close();
         }
-        return folder;
+        return null;
     }
     public Folder[] getAllFolders(){
         try {
@@ -111,14 +109,31 @@ public class Imap implements IProtokoll, IConnect {
             connect();
         }
         try {
+            if(!store.isConnected()){
+                connect();
+            }
             Folder inbox = store.getFolder("Inbox");
-            inbox.open(Folder.READ_WRITE);
             System.out.println("Antall meldinger " + inbox.getMessageCount());
             System.out.println("Nye meldinger " + inbox.getUnreadMessageCount());
-            close();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    public Folder opprettFolder(String navn){
+        Folder nyfolder = null;
+        if(!store.isConnected()){
+            connect();
+        }
+        try {
+            if(navn != null){
+                nyfolder = store.getFolder(navn);
+                nyfolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
+            }
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return nyfolder;
     }
 
     private static String finnHost(String sokestreng) {
@@ -130,20 +145,6 @@ public class Imap implements IProtokoll, IConnect {
             }
         }
         return null;
-    }
-
-    public Folder opprettFolder(String navn){
-        Folder nyfolder = null;
-        if(!store.isConnected()){
-            connect();
-        }
-        try {
-            nyfolder = store.getFolder(navn);
-            nyfolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        return nyfolder;
     }
 
 

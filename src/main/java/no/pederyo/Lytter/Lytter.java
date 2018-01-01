@@ -7,7 +7,6 @@ import no.pederyo.mailmanager.MailUtil;
 import javax.mail.*;
 import javax.mail.event.MessageCountAdapter;
 import javax.mail.event.MessageCountEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Lytter implements Runnable {
@@ -25,7 +24,8 @@ public class Lytter implements Runnable {
 
     public void run() {
         try {
-            leggTilLytter(folder, freq);
+            leggTilLytter();
+            lyttHjelper();
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -33,7 +33,7 @@ public class Lytter implements Runnable {
         }
     }
 
-    public void leggTilLytter(Folder folder, int freq) throws MessagingException, InterruptedException {
+    private void leggTilLytter() {
         folder.addMessageCountListener(new MessageCountAdapter() {
             public void messagesAdded(MessageCountEvent ev) {
                 Message[] msgs = ev.getMessages();
@@ -50,7 +50,6 @@ public class Lytter implements Runnable {
                                 + " Fra " + Arrays.toString(address)
                                 + " Sendt " + msgs[i].getSentDate());
                         if(emailSearcher.subjectExists(subject)){
-                            System.out.println("Det eksisterer");
                             mailUtil.flyttMeldinger(mailUtil.tilmappe, new Message[]{msg});
                         }
 
@@ -60,10 +59,9 @@ public class Lytter implements Runnable {
                 }
             }
         });
-        lyttHjelper(folder, 60000);
     }
 
-    private void lyttHjelper(Folder folder, int freq) throws MessagingException, InterruptedException {
+    private void lyttHjelper() throws MessagingException, InterruptedException {
         boolean supportsIdle = false;
         try {
             if (folder instanceof IMAPFolder) {

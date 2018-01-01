@@ -52,16 +52,28 @@ public class ImapStub implements IConnect {
     }
 
     public Folder hentFolder(String type){
-        Folder folder = null;
+        if(type != null){
+            try {
+                if(!store.isConnected()){
+                    connect();
+                }
+                return store.getFolder(type);
+            }catch (MessagingException e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    public Folder[] getAllFolders(){
         try {
-            folder = store.getFolder(type);
-            folder.open(1);
-            Message[] msg = folder.getMessages();
-            folder.close(false);
+            if(!store.isConnected()){
+                connect();
+            }
+            return store.getDefaultFolder().list("*");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        return folder;
+        return null;
     }
 
     public void sendMeld(String subject, String melding) {
@@ -72,9 +84,14 @@ public class ImapStub implements IConnect {
 
     public Folder opprettFolder(String navn){
         Folder nyfolder = null;
+        if(!store.isConnected()){
+            connect();
+        }
         try {
-            nyfolder = store.getFolder(navn);
-            nyfolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
+            if(navn != null){
+                nyfolder = store.getFolder(navn);
+                nyfolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
+            }
         } catch (MessagingException e) {
             e.printStackTrace();
         }

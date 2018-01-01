@@ -29,14 +29,16 @@ public class MailUtil {
         return messages;
     }
 
-    public Message[] hentUlestMail(){
-        Message[] messages = null;
-        try {
-            messages = folder.search(new FlagTerm(new Flags(Flag.SEEN), false));
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        return messages;
+    public boolean slettAlleMail() throws MessagingException {
+        return slett(folder.getMessages());
+    }
+
+    public boolean slettMail(Message[] messages) {
+        return slett(messages);
+    }
+
+    public Message[] hentUlestMail() throws MessagingException {
+        return folder.search(new FlagTerm(new Flags(Flag.SEEN), false));
     }
 
     public boolean flyttMeldinger(Folder tilMappe, Message[] messages){
@@ -45,11 +47,11 @@ public class MailUtil {
             try {
                 if( folder.exists() && tilMappe.exists() ) {
 
-                    SetFlags(messages);
+                    setFlagsDelete(messages);
 
                     folder.copyMessages(messages, tilMappe);
 
-                    //folder.expunge(); // Sletter mail med flag: DELETE.
+                    folder.expunge(); // Sletter mail med flag: DELETE.
 
                     flyttet = true;
                 }
@@ -83,10 +85,26 @@ public class MailUtil {
 
     // -------------------- HJELPE METODER --------------------
 
-    private void SetFlags(Message[] messages) throws MessagingException {
+    private boolean slett(Message[] messages){
+        boolean slettet = false;
+        if(messages != null || messages.length != 0){
+            int antall = messages.length;
+            try {
+                setFlagsDelete(messages);
+                folder.expunge();
+                slettet = antall != folder.getMessageCount();
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+        return slettet;
+    }
+
+    private void setFlagsDelete(Message[] messages) throws MessagingException {
         folder.setFlags(messages, new Flags(Flag.DELETED), true);
     }
-    private void SetFlagDelete(Message message) throws MessagingException {
+
+    private void setFlagDelete(Message message) throws MessagingException {
        message.setFlag(Flag.DELETED, true);
     }
 
