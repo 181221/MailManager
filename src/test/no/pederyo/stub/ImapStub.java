@@ -68,7 +68,16 @@ public class ImapStub implements IConnect, IImap {
 
     @Override
     public Folder getInbox() {
-        return null;
+        Folder inbox = null;
+        if(!store.isConnected()){
+            connect();
+        }
+        try {
+            inbox = store.getFolder("Inbox");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return inbox;
     }
 
     public Folder[] getAllFolders(){

@@ -21,6 +21,13 @@ public class ImapStubTest {
     public void setup(){
         imap = new ImapStub(greenMail);
     }
+    @Test
+    public void testGetInbox() throws MessagingException {
+        greenMail.start();
+        assertFalse(imap.getInbox() == null);
+        assertTrue(imap.getInbox().getName().toLowerCase().equals("inbox"));
+        assertTrue(imap.getInbox().exists());
+    }
 
     @Test
     public void hentFolder() throws MessagingException {
@@ -33,11 +40,19 @@ public class ImapStubTest {
     }
 
     @Test
-    public void getAllFolders() {
-    }
+    public void testGetAllFolders() throws MessagingException {
+        int folders = imap.getStore().getDefaultFolder().list().length;
+        imap.opprettFolder("test");
+        folders++;
+        assertTrue( folders == imap.getStore().getDefaultFolder().list().length);
 
-    @Test
-    public void sendMeld() {
+        imap.opprettFolder("testt");
+        folders++;
+        imap.opprettFolder("testtt");
+        folders++;
+        imap.opprettFolder("testtt");
+
+        assertTrue( folders == imap.getStore().getDefaultFolder().list().length);
     }
 
     @Test

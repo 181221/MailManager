@@ -2,12 +2,13 @@ package no.pederyo.protokoll.implementasjon;
 
 import no.pederyo.Attributter;
 import no.pederyo.protokoll.IConnect;
+import no.pederyo.protokoll.IImap;
 import no.pederyo.protokoll.IProtokoll;
 
 import javax.mail.*;
 import java.util.Properties;
 
-public class Imap implements IProtokoll, IConnect {
+public class Imap implements IProtokoll, IConnect, IImap {
 
     private static final String  IMAP_GMAIL_COM = "imap.gmail.com",
             IMAP_OUTLOOK_COM = "imap-mail.outlook.com",
@@ -79,6 +80,20 @@ public class Imap implements IProtokoll, IConnect {
         }
     }
 
+    @Override
+    public Folder getInbox() {
+        Folder inbox = null;
+        if(!store.isConnected()){
+            connect();
+        }
+        try {
+            inbox = store.getFolder("Inbox");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return inbox;
+    }
+
     public Folder getFolder(String mappe){
         if(mappe != null){
             try {
@@ -110,9 +125,6 @@ public class Imap implements IProtokoll, IConnect {
             connect();
         }
         try {
-            if(!store.isConnected()){
-                connect();
-            }
             Folder inbox = store.getFolder("Inbox");
             System.out.println("Antall meldinger " + inbox.getMessageCount());
             System.out.println("Nye meldinger " + inbox.getUnreadMessageCount());
