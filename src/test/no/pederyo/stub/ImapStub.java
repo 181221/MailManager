@@ -3,13 +3,14 @@ package no.pederyo.stub;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import no.pederyo.protokoll.IConnect;
+import no.pederyo.protokoll.IImap;
 
 import javax.mail.*;
 
 /**
  * Created by Peder on 31.12.2017.
  */
-public class ImapStub implements IConnect {
+public class ImapStub implements IConnect, IImap {
 
     public static final String EMAIL = "test@hvl.no", LOGIN = "hvl", PASSORD = "pass";
 
@@ -51,7 +52,7 @@ public class ImapStub implements IConnect {
         }
     }
 
-    public Folder hentFolder(String type){
+    public Folder getFolder(String type){
         if(type != null){
             try {
                 if(!store.isConnected()){
@@ -64,6 +65,12 @@ public class ImapStub implements IConnect {
         }
         return null;
     }
+
+    @Override
+    public Folder getInbox() {
+        return null;
+    }
+
     public Folder[] getAllFolders(){
         try {
             if(!store.isConnected()){
@@ -75,6 +82,7 @@ public class ImapStub implements IConnect {
         }
         return null;
     }
+
 
     public void sendMeld(String subject, String melding) {
         GreenMailUtil.sendTextEmail(EMAIL, EMAIL, subject,

@@ -92,6 +92,7 @@ public class Imap implements IProtokoll, IConnect {
         }
         return null;
     }
+
     public Folder[] getAllFolders(){
         try {
             if(!store.isConnected()){

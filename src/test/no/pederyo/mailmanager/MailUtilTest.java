@@ -11,9 +11,6 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -36,7 +33,7 @@ public class MailUtilTest {
     public void testHentAlleMail() throws MessagingException {
         greenMail.start();
         sendMeldinger(10);
-        Folder f = imap.hentFolder("INBOX");
+        Folder f = imap.getFolder("INBOX");
         f.open(Folder.READ_ONLY);
         MailUtil mu = new MailUtil(f);
         assertTrue(f.isOpen());
@@ -50,7 +47,7 @@ public class MailUtilTest {
     public void testHentUlestMail() throws MessagingException {
         greenMail.start();
         sendMeldinger(10);
-        Folder f = imap.hentFolder("INBOX");
+        Folder f = imap.getFolder("INBOX");
         f.open(Folder.READ_ONLY);
         MailUtil mu = new MailUtil(f);
 
@@ -83,7 +80,7 @@ public class MailUtilTest {
         kvittering.open(Folder.READ_WRITE);
         Message[] meldinger = inbox.getMessages();
         assertTrue(mu.flyttMeldinger(kvittering, meldinger));
-        inbox = imap.hentFolder("INBOX");
+        inbox = imap.getFolder("INBOX");
         assertTrue(inbox.getMessageCount() == 0);
 
     }
@@ -97,7 +94,7 @@ public class MailUtilTest {
     private MailUtil startogconnect(){
         greenMail.start();
         sendMeldinger(10);
-        Folder f = imap.hentFolder("INBOX");
+        Folder f = imap.getFolder("INBOX");
         try {
             f.open(Folder.READ_WRITE);
         } catch (MessagingException e) {

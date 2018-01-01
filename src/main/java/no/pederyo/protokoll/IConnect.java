@@ -11,4 +11,5 @@ public interface IConnect {
     void connect();
 
     void close();
+
 }

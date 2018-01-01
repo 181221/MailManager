@@ -53,6 +53,7 @@ public class Pop3 implements IProtokoll, IConnect {
         }
     }
 
+
     public Store store(){
         Store store = null;
         try {

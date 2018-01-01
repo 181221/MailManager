@@ -62,7 +62,8 @@ public class EmailSearcher {
             public boolean match(Message message) {
                 try {
                     String subject = message.getSubject().toLowerCase();
-                    subjectExists(subject);
+                    if(subjectExists(subject))
+                        return true;
                 } catch (MessagingException ex) {
                     ex.printStackTrace();
                 }

@@ -32,7 +32,7 @@ public class EmailSearcherTest {
     }
 
     @Test
-    public void testFinnerMailPaSubject() {
+    public void testFinnerMailPaSubject() throws MessagingException {
         SokeOrd sokeOrd = new SokeOrd();
         imap.sendMeld("Test", "test");
         imap.sendMeld("Kvittering", "test");
@@ -40,33 +40,29 @@ public class EmailSearcherTest {
         imap.sendMeld("ordre bekreftelse", "test");
         imap.sendMeld("Dette er en kvitering Kvittering", "test");
         imap.sendMeld("Denne meldingen er en Receipt", "test");
-        Folder inbox = imap.hentFolder("INBOX");
+        Folder inbox = imap.getFolder("INBOX");
+        inbox.open(Folder.READ_WRITE);
+
         EmailSearcher es = new EmailSearcher(sokeOrd, inbox);
+        imap.getInbox();
         Message[] msg = es.hentMeldingerFraSokeListe();
         assertTrue(msg.length == 5);
 
-        sokeOrd.leggTilSokeOrd("VIKTIGMELDING");
+        es.getSokeOrd().leggTilSokeOrd("VIKTIGMELDING");
+
         imap.sendMeld("VIKTIGMELDING", "test");
+
         msg = es.hentMeldingerFraSokeListe();
+
         assertTrue(msg.length == 6);
 
-        sokeOrd.leggTilSokeOrd("VIkTIgMELDING");
+        es.getSokeOrd().leggTilSokeOrd("VIKTIGMELDING");
         imap.sendMeld("VIkTIGMELDING", "test");
         msg = es.hentMeldingerFraSokeListe();
         assertTrue(msg.length == 7);
     }
 
-    @Test
-    public void testOpprettMappe() throws MessagingException {
-        imap.sendMeld("Test", "test");
-        assertTrue(imap.hentFolder("INBOX").exists());
 
-        Folder nyfolder = imap.opprettFolder("Kvitteringer");
-        Folder[] alleimap = imap.getStore().getDefaultFolder().list();
-
-        assertTrue(alleimap.length == 2);
-        assertTrue(nyfolder.exists());
-    }
 
     @Test
     public void testHentMeldingerTilAvsender(){

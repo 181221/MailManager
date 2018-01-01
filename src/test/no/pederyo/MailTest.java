@@ -51,7 +51,7 @@ public class MailTest {
         greenMail.start();
 
         imapStub.sendMeld("Heisann", "funk pls:");
-        Folder f = imapStub.hentFolder("INBOX");
+        Folder f = imapStub.getFolder("INBOX");
         assertTrue(f.getMessageCount() == 1);
         Message[] messages = greenMail.getReceivedMessages();
         assertNotNull(messages);
@@ -63,7 +63,7 @@ public class MailTest {
     public void testInboxMotarMail() throws MessagingException {
         greenMail.start();
         imapStub.sendMeld(subject, body);
-        Folder f = imapStub.hentFolder("INBOX");
+        Folder f = imapStub.getFolder("INBOX");
         assertTrue(f.getMessageCount() == 1);
     }
 
