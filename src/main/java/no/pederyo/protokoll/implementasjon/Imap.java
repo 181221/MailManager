@@ -18,6 +18,8 @@ public class Imap implements IProtokoll, IConnect, IImap {
 
     public static final HashMap<Integer, String> HOSTMAP = new HashMap<>();
 
+    private boolean harConnected;
+
     private Properties properties;
     private Session session;
     private Store store;
@@ -27,7 +29,8 @@ public class Imap implements IProtokoll, IConnect, IImap {
         properties = setup();
         session = authenticate();
         store = store();
-        connect();
+        mailType = IMAP_DEFAULT;
+        harConnected = connect();
     }
 
     public Imap(int mailType) {
@@ -36,7 +39,7 @@ public class Imap implements IProtokoll, IConnect, IImap {
         properties = setup();
         session = authenticate();
         store = store();
-        connect();
+        harConnected = connect();
     }
 
     public Properties setup() {
@@ -63,12 +66,13 @@ public class Imap implements IProtokoll, IConnect, IImap {
         return store;
     }
 
-    public void connect() {
+    public boolean connect() {
         try {
             store.connect(mailType, Attributter.FRAMAIL, Attributter.PASSORD);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+        return store().isConnected();
     }
 
     public void close() {
@@ -152,5 +156,9 @@ public class Imap implements IProtokoll, IConnect, IImap {
             HOSTMAP.put(0, IMAP_GMAIL_COM);
             HOSTMAP.put(1, IMAP_OUTLOOK_COM);
             HOSTMAP.put(2, IMAP_YAHOO_COM);
+    }
+
+    public boolean isHarConnected() {
+        return harConnected;
     }
 }

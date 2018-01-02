@@ -51,6 +51,12 @@ public class Lytter implements Runnable {
                                 + " Sendt " + msgs[i].getSentDate());
                         if(emailSearcher.subjectExists(subject)){
                             mailUtil.flyttMeldinger(mailUtil.tilmappe, new Message[]{msg});
+                            if(mailUtil.tilmappe.isOpen()){
+                                mailUtil.tilmappe.close(false);
+                                mailUtil.tilmappe.open(Folder.READ_ONLY);;
+                            }
+                            System.out.println("Mailen inneholder sokeord..");
+                            System.out.println("Flytter melding til " + mailUtil.tilmappe.getName());
                         }
 
                     } catch (MessagingException e) {

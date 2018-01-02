@@ -37,12 +37,13 @@ public class Pop3 implements IProtokoll, IConnect {
                 });
     }
 
-    public void connect() {
+    public boolean connect() {
         try {
             store.connect(POP_GMAIL_COM,Attributter.FRAMAIL, Attributter.PASSORD);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+        return store().isConnected();
     }
 
     public void close() {

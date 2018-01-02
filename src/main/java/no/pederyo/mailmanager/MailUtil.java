@@ -47,9 +47,9 @@ public class MailUtil {
             try {
                 if( folder.exists() && tilMappe.exists() ) {
 
-                    setFlagsDelete(messages);
-
                     folder.copyMessages(messages, tilMappe);
+
+                    setFlagsDelete(messages);
 
                     folder.expunge(); // Sletter mail med flag: DELETE.
 

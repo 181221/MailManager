@@ -16,7 +16,9 @@ public class SokeOrd {
 
     public SokeOrd(String[] liste){
         ordliste = new HashSet<String>();
-        ordliste.addAll(Arrays.asList(liste));
+        for(String ord : liste){
+            ordliste.add(ord.toLowerCase());
+        }
     }
 
     public boolean leggTilSokeOrd(String ord){

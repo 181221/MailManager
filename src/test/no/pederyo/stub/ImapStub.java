@@ -34,7 +34,7 @@ public class ImapStub implements IConnect, IImap {
         return null;
     }
 
-    public void connect() {
+    public boolean connect() {
         try {
             store.connect(LOGIN, PASSORD);
         } catch (NoSuchProviderException e) {
@@ -42,6 +42,7 @@ public class ImapStub implements IConnect, IImap {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+        return store.isConnected();
     }
 
     public void close() {

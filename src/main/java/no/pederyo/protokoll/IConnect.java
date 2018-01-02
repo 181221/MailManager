@@ -8,7 +8,7 @@ import javax.mail.Store;
 public interface IConnect {
     Store store();
 
-    void connect();
+    boolean connect();
 
     void close();
 
