@@ -40,4 +40,9 @@ public class SokeOrd {
     public HashSet<String> getOrdliste() {
         return ordliste;
     }
+    public void visListe() {
+        for(String ord : ordliste){
+            System.out.println(ord);
+        }
+    }
 }

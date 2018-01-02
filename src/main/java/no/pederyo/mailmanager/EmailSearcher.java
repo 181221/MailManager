@@ -11,6 +11,7 @@ public class EmailSearcher {
     private IImap imap;
     private SokeOrd sokeOrd;
     private Folder folder;
+    private String beskrivelse;
 
     public EmailSearcher(SokeOrd sokeOrd, Folder folder, IImap imap) {
         this.sokeOrd = sokeOrd;
@@ -95,6 +96,14 @@ public class EmailSearcher {
         }
         return false;
 
+    }
+
+    public String getBeskrivelse() {
+        return beskrivelse;
+    }
+
+    public void setBeskrivelse(String beskrivelse) {
+        this.beskrivelse = beskrivelse;
     }
 
     public SokeOrd getSokeOrd() {
