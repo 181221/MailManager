@@ -68,11 +68,15 @@ public class Imap implements IProtokoll, IConnect, IImap {
 
     public boolean connect() {
         try {
-            store.connect(mailType, Attributter.FRAMAIL, Attributter.PASSORD);
+            if(store.isConnected()){
+                return true;
+            }else {
+                store.connect(mailType, Attributter.FRAMAIL, Attributter.PASSORD);
+            }
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        return store().isConnected();
+        return store.isConnected();
     }
 
     public void close() {
