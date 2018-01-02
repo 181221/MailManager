@@ -10,6 +10,7 @@ import no.pederyo.protokoll.implementasjon.Imap;
 import no.pederyo.protokoll.implementasjon.Smtp;
 
 import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class Klient {
     private static Smtp smtp;
     private static SokeOrd sokeOrd;
     private static ArrayList<EmailSearcher> emailSearcher = new ArrayList<>();
+    private static ArrayList<MailUtil> mailUtils = new ArrayList<>();
 
     public static void main(String[] args) throws MessagingException {
 
@@ -49,7 +51,7 @@ public class Klient {
     }
 
     private static void startKlient() throws MessagingException {
-        String menu = "1: Soeker\n2: OpprettSoeker \n3: VisSokere \n4: LeggTil en Behandler\n5: Avslutt";
+        String menu = "1: Soeker\n2: OpprettSoeker \n3: VisSokere \n4: LeggTil en Behandler\n5: velg behandler \n6 Legg til lytter \n7 Avslutt";
         int valg;
         if(imap.isHarConnected()){
             do {
@@ -68,17 +70,65 @@ public class Klient {
                         visListe();
                         break;
                     case 4:
-                        MailUtil mu = opprettBehandler();
+                        MailUtil m = opprettBehandler();
+                        soekerMenu(m);
+                    case 5:
+                        MailUtil mu = velgBehandler();
+                        soekerMenu(mu);
+                    case 6:
+                        EmailSearcher soker = soeker();
+                        System.out.println("Velg Behandler");
+                        MailUtil mailbehandler = velgBehandler();
+                        if(soker != null && mailbehandler != null){
+                            System.out.println("Oppretter Lytter");
+                            // LISTENER
+                            Lytter lytter = new Lytter(mailbehandler.folder, 60000, soker, mailbehandler);
+
+                            Thread thread = new Thread(lytter);
+
+                            thread.start();
+                            break;
+                        }else {
+                            System.out.println("det skjedde en feil");
+                            break;
+                        }
                 }
-            }while(valg != 5);
+            }while(valg != 7);
             }
     }
+
+    private static MailUtil velgBehandler() {
+        if(mailUtils == null || mailUtils.isEmpty()){
+            System.out.println("Du har ingen søkere. Vennligst Opprett en.");
+        }else {
+            System.out.println("velg soker");
+            int i = 0;
+            for(MailUtil mu : mailUtils){
+                System.out.println("Behandler " + "(" + i + ")" + mu.getBeskrivelse());
+                i++;
+            }
+            return mailUtils.get(in.nextInt());
+        }
+        return null;
+    }
+
 
     private static MailUtil opprettBehandler() {
         System.out.println("Velg 2 mapper en fra og en til mappe.");
         Folder mappe1 = velgMappeBehandler();
         Folder mappe2 = velgMappeBehandler();
-        return new MailUtil(mappe1, mappe2);
+        try {
+            mappe1.open(Folder.READ_WRITE);
+            mappe2.open(Folder.READ_WRITE);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        MailUtil mu = new MailUtil(mappe1, mappe2);
+        System.out.println("Beskrivelse..");
+        in.nextLine();
+        mu.setBeskrivelse(in.nextLine());
+        mailUtils.add(mu);
+        return mu;
     }
     private static Folder velgMappeBehandler(){
         int i = 0;
@@ -94,6 +144,33 @@ public class Klient {
     private static void soekerMenu(EmailSearcher em) {
 
     }
+    private static void soekerMenu(MailUtil mu) throws MessagingException {
+        String menu = "1: slettAlleMail\n2: hentUlestMail \n3: hentAlleMail \n4: Beskrivelse \n5: Avslutt";
+        Message[] meldinger = null;
+        int valg;
+        if(imap.isHarConnected()){
+            do {
+                System.out.println(menu);
+                valg = in.nextInt();
+                switch (valg){
+                    case 1:
+                        mu.slettAlleMail();
+                        break;
+                    case 2:
+                        meldinger = mu.hentUlestMail();
+                        mu.printUt(meldinger);
+                        break;
+                    case 3:
+                        meldinger = mu.hentAlleMail();
+                        mu.printUt(meldinger);
+                        break;
+                    case 4:
+                        System.out.println("Beskrivelse " +  mu.getBeskrivelse());
+                        break;
+                }
+            }while(valg != 5);
+        }
+    }
 
 
     private static EmailSearcher opprettSoeker() {
@@ -107,13 +184,14 @@ public class Klient {
         }
         EmailSearcher em = new EmailSearcher(sokeOrd, folder, imap);
         System.out.println("Legg til en beskrivelse");
-        em.setBeskrivelse(in.next());
+        in.nextLine();
+        em.setBeskrivelse(in.nextLine());
         emailSearcher.add(em);
         return em;
     }
 
     private static EmailSearcher soeker() {
-        if(emailSearcher == null){
+        if(emailSearcher == null || emailSearcher.isEmpty()){
             System.out.println("Du har ingen søkere. Vennligst Opprett en.");
         }else {
             System.out.println("velg soker");

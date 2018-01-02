@@ -5,8 +5,9 @@ import javax.mail.Flags.Flag;
 import javax.mail.search.FlagTerm;
 
 public class MailUtil {
-    Folder folder;
+    public Folder folder;
     public Folder tilmappe;
+    private String beskrivelse;
 
     public MailUtil(Folder folder, Folder tilmappe){
         this.folder =folder;
@@ -120,6 +121,12 @@ public class MailUtil {
         return fraMappe != null && tilMappe != null && messages != null ;
     }
 
+    public String getBeskrivelse() {
+        return beskrivelse;
+    }
 
+    public void setBeskrivelse(String beskrivelse) {
+        this.beskrivelse = beskrivelse;
+    }
 
 }
