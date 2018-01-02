@@ -6,19 +6,17 @@ import no.pederyo.protokoll.IImap;
 import no.pederyo.protokoll.IProtokoll;
 
 import javax.mail.*;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class Imap implements IProtokoll, IConnect, IImap {
 
-    private static final String  IMAP_GMAIL_COM = "imap.gmail.com",
+    public static final String  IMAP_GMAIL_COM = "imap.gmail.com",
             IMAP_OUTLOOK_COM = "imap-mail.outlook.com",
             IMAP_YAHOO_COM = "imap.mail.yahoo.com",
             IMAP_DEFAULT = IMAP_GMAIL_COM;
 
-    private static final String[] HOST = new String[] {
-            IMAP_GMAIL_COM,
-            IMAP_OUTLOOK_COM,
-            IMAP_YAHOO_COM};
+    public static final HashMap<Integer, String> HOSTMAP = new HashMap<>();
 
     private Properties properties;
     private Session session;
@@ -32,8 +30,9 @@ public class Imap implements IProtokoll, IConnect, IImap {
         connect();
     }
 
-    public Imap(String mailType) {
-        this.mailType = finnHost(mailType);
+    public Imap(int mailType) {
+        leggTilalle();
+        this.mailType = HOSTMAP.get(mailType);
         properties = setup();
         session = authenticate();
         store = store();
@@ -149,16 +148,9 @@ public class Imap implements IProtokoll, IConnect, IImap {
         return nyfolder;
     }
 
-    private static String finnHost(String sokestreng) {
-        for (String h : HOST) {
-            if(h != null){
-                if(h.equals(sokestreng)){
-                    return h;
-                }
-            }
-        }
-        return null;
+    private void leggTilalle(){
+            HOSTMAP.put(0, IMAP_GMAIL_COM);
+            HOSTMAP.put(1, IMAP_OUTLOOK_COM);
+            HOSTMAP.put(2, IMAP_YAHOO_COM);
     }
-
-
 }

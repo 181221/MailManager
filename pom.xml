@@ -7,6 +7,20 @@
     <groupId>Mail.Manager</groupId>
     <artifactId>Mail-Manager</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <encoding>UTF-8</encoding>
+        <java.version>1.8</java.version>
+
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+        <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
+        <maven-source-plugin.version>2.3</maven-source-plugin.version>
+    </properties>
 
     <developers>
         <developer>
@@ -18,13 +32,19 @@
         </developer>
     </developers>
     <build>
+        <finalName>mm</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <archive>
+                        <manifest>
+                            <mainClass>no.pederyo.klient.Klient</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>
@@ -50,12 +70,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.0.2</version>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

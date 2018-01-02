@@ -8,18 +8,16 @@ import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class Smtp implements IProtokoll {
-    private static final String SMTP_GMAIL_COM = "smtp.gmail.com",
+    public static final String SMTP_GMAIL_COM = "smtp.gmail.com",
             SMTP_OUTLOOK_COM = "smtp-mail.outlook.com",
             SMTP_YAHOO_COM = "smtp.mail.yahoo.com",
             SMTP_DEFAULT = SMTP_GMAIL_COM;
 
-    private static final String[] HOST = new String[] {
-            SMTP_GMAIL_COM,
-            SMTP_OUTLOOK_COM,
-            SMTP_YAHOO_COM};
+    public static final HashMap<Integer, String> HOSTMAP = new HashMap<>();
 
     private String mailType;
     private Properties properties;
@@ -30,10 +28,11 @@ public class Smtp implements IProtokoll {
         session = authenticate();
     }
 
-    public Smtp(String mailType){
+    public Smtp(int mailType){
+        leggTilalle();
+        this.mailType = HOSTMAP.get(mailType);
         properties = setup();
         session = authenticate();
-        this.mailType = finnHost(mailType);
     }
 
     public Properties setup() {
@@ -74,14 +73,10 @@ public class Smtp implements IProtokoll {
         }
         return mail.getResult();
     }
-    private static String finnHost(String sokestreng) {
-        for (String h : HOST) {
-            if(h != null){
-                if(h.equals(sokestreng)){
-                    return h;
-                }
-            }
-        }
-        return null;
+
+    private void leggTilalle(){
+        HOSTMAP.put(0, SMTP_GMAIL_COM);
+        HOSTMAP.put(1, SMTP_OUTLOOK_COM);
+        HOSTMAP.put(2, SMTP_YAHOO_COM);
     }
 }
