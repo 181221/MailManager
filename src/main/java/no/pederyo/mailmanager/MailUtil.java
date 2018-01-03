@@ -26,7 +26,7 @@ public class MailUtil {
         return slett(messages);
     }
 
-    public Message[] hentUlestMail(Folder folder) throws MessagingException {
+    public static Message[] hentUlestMail(Folder folder) throws MessagingException {
         return folder.search(new FlagTerm(new Flags(Flag.SEEN), false));
     }
 

@@ -35,9 +35,8 @@ public class MailUtilTest {
         sendMeldinger(10);
         Folder f = imap.getFolder("INBOX");
         f.open(Folder.READ_ONLY);
-        MailUtil mu = new MailUtil(f);
         assertTrue(f.isOpen());
-        Message[] msg = mu.hentAlleMail();
+        Message[] msg = MailUtil.hentAlleMail(f);
         assertFalse(msg == null);
         assertFalse(msg.length == 1);
         assertTrue(msg.length == 10);
@@ -49,39 +48,37 @@ public class MailUtilTest {
         sendMeldinger(10);
         Folder f = imap.getFolder("INBOX");
         f.open(Folder.READ_ONLY);
-        MailUtil mu = new MailUtil(f);
 
-        Message[] msg = mu.hentAlleMail();
-        assertTrue(mu.hentUlestMail() != null);
-        assertFalse(mu.hentUlestMail().length == 3);
-        assertTrue(mu.hentUlestMail().length == msg.length);
+        Message[] msg = MailUtil.hentAlleMail(f);
+        assertTrue(MailUtil.hentUlestMail(f) != null);
+        assertFalse(MailUtil.hentUlestMail(f).length == 3);
+        assertTrue(MailUtil.hentUlestMail(f).length == msg.length);
         sendMeldinger(5);
     }
     @Test
     public void testSlett() throws MessagingException {
-        MailUtil mu = startogconnect();
-        Message[] msg = mu.hentAlleMail();
-        assertTrue(mu.slettMail(msg));
+        Folder f = startogconnect();
+        Message[] msg = MailUtil.hentAlleMail(f);
+        assertTrue(MailUtil.slettMail(msg));
     }
 
 
     @Test
     public void testSlettAlleMail() throws MessagingException {
-        MailUtil mu = startogconnect();
-        boolean slettet = mu.slettAlleMail();
+        Folder f = startogconnect();
+        boolean slettet = MailUtil.slettAlleMail(f);
         assertTrue(slettet);
     }
 
     @Test
     public void testFlyttMeldinger() throws MessagingException {
-        MailUtil mu = startogconnect();
+        Folder f = startogconnect();
         Folder kvittering = imap.opprettFolder("Kvittering");
-        Folder inbox = mu.folder;
         kvittering.open(Folder.READ_WRITE);
-        Message[] meldinger = inbox.getMessages();
-        assertTrue(mu.flyttMeldinger(kvittering, meldinger));
-        inbox = imap.getFolder("INBOX");
-        assertTrue(inbox.getMessageCount() == 0);
+        Message[] meldinger = f.getMessages();
+        assertTrue(MailUtil.flyttMeldinger(f, kvittering, meldinger));
+        f = imap.getFolder("INBOX");
+        assertTrue(f.getMessageCount() == 0);
 
     }
 
@@ -91,7 +88,7 @@ public class MailUtilTest {
         }
     }
 
-    private MailUtil startogconnect(){
+    private Folder startogconnect(){
         greenMail.start();
         sendMeldinger(10);
         Folder f = imap.getFolder("INBOX");
@@ -100,6 +97,6 @@ public class MailUtilTest {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        return new MailUtil(f);
+        return f;
     }
 }
