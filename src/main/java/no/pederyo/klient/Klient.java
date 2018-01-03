@@ -70,24 +70,15 @@ public class Klient {
                         visListe();
                         break;
                     case 4:
-                        MailUtil m = opprettBehandler();
-                        soekerMenu(m);
+                        break;
                     case 5:
-                        MailUtil mu = velgBehandler();
-                        soekerMenu(mu);
+                        break;
                     case 6:
                         EmailSearcher soker = soeker();
                         System.out.println("Velg Behandler");
-                        MailUtil mailbehandler = velgBehandler();
-                        if(soker != null && mailbehandler != null){
+                        if(soker != null){
                             System.out.println("Oppretter Lytter");
                             // LISTENER
-                            Lytter lytter = new Lytter(mailbehandler.folder, 60000, soker, mailbehandler);
-
-                            Thread thread = new Thread(lytter);
-
-                            thread.start();
-                            break;
                         }else {
                             System.out.println("det skjedde en feil");
                             break;
@@ -95,40 +86,6 @@ public class Klient {
                 }
             }while(valg != 7);
             }
-    }
-
-    private static MailUtil velgBehandler() {
-        if(mailUtils == null || mailUtils.isEmpty()){
-            System.out.println("Du har ingen søkere. Vennligst Opprett en.");
-        }else {
-            System.out.println("velg soker");
-            int i = 0;
-            for(MailUtil mu : mailUtils){
-                System.out.println("Behandler " + "(" + i + ")" + mu.getBeskrivelse());
-                i++;
-            }
-            return mailUtils.get(in.nextInt());
-        }
-        return null;
-    }
-
-
-    private static MailUtil opprettBehandler() {
-        System.out.println("Velg 2 mapper en fra og en til mappe.");
-        Folder mappe1 = velgMappeBehandler();
-        Folder mappe2 = velgMappeBehandler();
-        try {
-            mappe1.open(Folder.READ_WRITE);
-            mappe2.open(Folder.READ_WRITE);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        MailUtil mu = new MailUtil(mappe1, mappe2);
-        System.out.println("Beskrivelse..");
-        in.nextLine();
-        mu.setBeskrivelse(in.nextLine());
-        mailUtils.add(mu);
-        return mu;
     }
     private static Folder velgMappeBehandler(){
         int i = 0;
@@ -144,35 +101,6 @@ public class Klient {
     private static void soekerMenu(EmailSearcher em) {
 
     }
-    private static void soekerMenu(MailUtil mu) throws MessagingException {
-        String menu = "1: slettAlleMail\n2: hentUlestMail \n3: hentAlleMail \n4: Beskrivelse \n5: Avslutt";
-        Message[] meldinger = null;
-        int valg;
-        if(imap.isHarConnected()){
-            do {
-                System.out.println(menu);
-                valg = in.nextInt();
-                switch (valg){
-                    case 1:
-                        mu.slettAlleMail();
-                        break;
-                    case 2:
-                        meldinger = mu.hentUlestMail();
-                        mu.printUt(meldinger);
-                        break;
-                    case 3:
-                        meldinger = mu.hentAlleMail();
-                        mu.printUt(meldinger);
-                        break;
-                    case 4:
-                        System.out.println("Beskrivelse " +  mu.getBeskrivelse());
-                        break;
-                }
-            }while(valg != 5);
-        }
-    }
-
-
     private static EmailSearcher opprettSoeker() {
         SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
         System.out.println("Velg Mappe du vil søke i ");
@@ -243,6 +171,7 @@ public class Klient {
     }
 
     private static void hentKleint() {
+
     }
 
 
@@ -267,14 +196,10 @@ public class Klient {
             EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, inbox, imap);
             System.out.println("Oppretter behandler..");
             // BEHANDLER
-            MailUtil mailUtil = new MailUtil(inbox, mappe);
-
             System.out.println("Oppretter lytter...");
             // LISTENER
-            Lytter lytter = new Lytter(inbox, 60000, emailSearcher, mailUtil);
-
+            Lytter lytter = new Lytter(inbox, mappe, 60000, emailSearcher);
             Thread thread = new Thread(lytter);
-
             thread.start();
 
         }else {

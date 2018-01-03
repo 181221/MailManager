@@ -10,16 +10,16 @@ import javax.mail.event.MessageCountEvent;
 import java.util.Arrays;
 
 public class Lytter implements Runnable {
-    private Folder folder;
+    private Folder fra;
+    private Folder til;
     private int freq;
     private EmailSearcher emailSearcher;
-    private MailUtil mailUtil;
 
-    public Lytter(Folder folder, int freq, EmailSearcher emailSearcher, MailUtil mailUtil) {
-        this.folder = folder;
+    public Lytter(Folder fra, Folder til, int freq, EmailSearcher emailSearcher) {
+        this.fra = fra;
+        this.til = til;
         this.freq = freq;
         this.emailSearcher = emailSearcher;
-        this.mailUtil = mailUtil;
     }
 
     public void run() {
@@ -34,7 +34,7 @@ public class Lytter implements Runnable {
     }
 
     private void leggTilLytter() {
-        folder.addMessageCountListener(new MessageCountAdapter() {
+        fra.addMessageCountListener(new MessageCountAdapter() {
             public void messagesAdded(MessageCountEvent ev) {
                 Message[] msgs = ev.getMessages();
                 System.out.println("Got " + msgs.length + " new messages");
@@ -50,13 +50,13 @@ public class Lytter implements Runnable {
                                 + " Fra " + Arrays.toString(address)
                                 + " Sendt " + msgs[i].getSentDate());
                         if(emailSearcher.subjectExists(subject)){
-                            mailUtil.flyttMeldinger(mailUtil.tilmappe, new Message[]{msg});
-                            if(mailUtil.tilmappe.isOpen()){
-                                mailUtil.tilmappe.close(false);
-                                mailUtil.tilmappe.open(Folder.READ_ONLY);;
+                            MailUtil.flyttMeldinger(fra, til, new Message[]{msg});
+                            if(til.isOpen()){
+                                til.close(false);
+                                til.open(Folder.READ_ONLY);
                             }
                             System.out.println("Mailen inneholder sokeord..");
-                            System.out.println("Flytter melding til " + mailUtil.tilmappe.getName());
+                            System.out.println("Flytter melding til " + til.getName());
                         }
 
                     } catch (MessagingException e) {
@@ -70,8 +70,8 @@ public class Lytter implements Runnable {
     private void lyttHjelper() throws MessagingException, InterruptedException {
         boolean supportsIdle = false;
         try {
-            if (folder instanceof IMAPFolder) {
-                IMAPFolder f = (IMAPFolder) folder;
+            if (fra instanceof IMAPFolder) {
+                IMAPFolder f = (IMAPFolder) fra;
                 f.idle();
                 supportsIdle = true;
             }
@@ -81,8 +81,8 @@ public class Lytter implements Runnable {
             supportsIdle = false;
         }
         for (; ; ) {
-            if (supportsIdle && folder instanceof IMAPFolder) {
-                IMAPFolder f = (IMAPFolder) folder;
+            if (supportsIdle && fra instanceof IMAPFolder) {
+                IMAPFolder f = (IMAPFolder) fra;
                 f.idle();
                 System.out.println("IDLE done");
             } else {
@@ -90,7 +90,7 @@ public class Lytter implements Runnable {
 
                 // This is to force the IMAP server to send us
                 // EXISTS notifications.
-                folder.getMessageCount();
+                fra.getMessageCount();
             }
         }
     }

@@ -5,20 +5,8 @@ import javax.mail.Flags.Flag;
 import javax.mail.search.FlagTerm;
 
 public class MailUtil {
-    public Folder folder;
-    public Folder tilmappe;
-    private String beskrivelse;
 
-    public MailUtil(Folder folder, Folder tilmappe){
-        this.folder =folder;
-        this.tilmappe = tilmappe;
-    }
-
-    public MailUtil(Folder folder){
-        this.folder = folder;
-    }
-
-    public Message[] hentAlleMail(){
+    public static Message[] hentAlleMail(Folder folder){
         Message[] messages = null;
         try {
             messages = folder.getMessages();
@@ -30,29 +18,29 @@ public class MailUtil {
         return messages;
     }
 
-    public boolean slettAlleMail() throws MessagingException {
+    public static boolean slettAlleMail(Folder folder) throws MessagingException {
         return slett(folder.getMessages());
     }
 
-    public boolean slettMail(Message[] messages) {
+    public static boolean slettMail(Message[] messages) {
         return slett(messages);
     }
 
-    public Message[] hentUlestMail() throws MessagingException {
+    public Message[] hentUlestMail(Folder folder) throws MessagingException {
         return folder.search(new FlagTerm(new Flags(Flag.SEEN), false));
     }
 
-    public boolean flyttMeldinger(Folder tilMappe, Message[] messages){
+    public static boolean flyttMeldinger(Folder fra, Folder til, Message[] messages){
         Boolean flyttet = false;
-        if( kanFlyttes( folder, tilMappe, messages) ) {
+        if( kanFlyttes(fra, til, messages) ) {
             try {
-                if( folder.exists() && tilMappe.exists() ) {
+                if( fra.exists() && til.exists() ) {
 
-                    folder.copyMessages(messages, tilMappe);
+                    fra.copyMessages(messages, til);
 
                     setFlagsDelete(messages);
 
-                    folder.expunge(); // Sletter mail med flag: DELETE.
+                    fra.expunge(); // Sletter mail med flag: DELETE.
 
                     flyttet = true;
                 }
@@ -63,7 +51,7 @@ public class MailUtil {
         return flyttet;
     }
 
-    public void printUt(Message[] messages){
+    public static void printUt(Message[] messages){
         if(messages.length > 0){
             Folder folder = messages[0].getFolder();
             if(!folder.isOpen()){
@@ -86,9 +74,10 @@ public class MailUtil {
 
     // -------------------- HJELPE METODER --------------------
 
-    private boolean slett(Message[] messages){
+    private static boolean slett(Message[] messages){
         boolean slettet = false;
         if(messages != null || messages.length != 0){
+            Folder folder = messages[0].getFolder();
             int antall = messages.length;
             try {
                 setFlagsDelete(messages);
@@ -101,11 +90,11 @@ public class MailUtil {
         return slettet;
     }
 
-    private void setFlagsDelete(Message[] messages) throws MessagingException {
-        folder.setFlags(messages, new Flags(Flag.DELETED), true);
+    private static void  setFlagsDelete(Message[] messages) throws MessagingException {
+        messages[0].getFolder().setFlags(messages, new Flags(Flag.DELETED), true);
     }
 
-    private void setFlagDelete(Message message) throws MessagingException {
+    private static void setFlagDelete(Message message) throws MessagingException {
        message.setFlag(Flag.DELETED, true);
     }
 
@@ -114,19 +103,10 @@ public class MailUtil {
         m2.close(false);
     }
 
-    private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message[] messages){
-        return fraMappe != null && tilMappe != null && messages != null && messages.length > 0;
+    private static boolean kanFlyttes(Folder fra, Folder til, Message[] messages){
+        return fra != null && til != null && messages != null && messages.length > 0;
     }
-    private boolean kanFlyttes(Folder fraMappe, Folder tilMappe, Message messages){
-        return fraMappe != null && tilMappe != null && messages != null ;
+    private boolean kanFlyttes(Folder fra, Folder til, Message messages){
+        return fra != null && til != null && messages != null ;
     }
-
-    public String getBeskrivelse() {
-        return beskrivelse;
-    }
-
-    public void setBeskrivelse(String beskrivelse) {
-        this.beskrivelse = beskrivelse;
-    }
-
 }
