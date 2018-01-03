@@ -76,7 +76,6 @@ public class Grensesnitt {
     }
 
     public Folder velgMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException {
-        System.out.println("Vennligst velg en mappe");
         int i = in.nextInt();
         Folder folder = null;
         if(i == 0){
@@ -84,18 +83,20 @@ public class Grensesnitt {
             String navn = in.next();
             folder = imap.opprettFolder(navn);
         }else {
-            folder = imap.getFolder(map.get(in.nextInt()));
+            folder = imap.getFolder(map.get(i));
         }
         return folder;
     }
     public HashMap<Integer, String> visMappe(Imap imap){
         int i = 1;
         HashMap<Integer, String> map = new HashMap<>();
+
+        System.out.println("(" + 0 + ") Opprett ny");
         for(Folder f : imap.getAllFolders()){
             map.put(i, f.getName());
+            System.out.println("(" + i + ") " + f.getName());
             i++;
         }
-        System.out.println("(" + 0 + ") Opprett ny");
         return map;
     }
     public String[] opprettSokeListe(){

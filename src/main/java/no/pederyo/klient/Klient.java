@@ -43,7 +43,6 @@ public class Klient {
                     startKlient();
                     break;
                 case 4:
-                    statiskFerdigKlient();
                     startKlient();
                     break;
             }
@@ -155,29 +154,6 @@ public class Klient {
                 es.getSokeOrd().visListe();
             }
         }
-    }
-
-
-    private static void statiskFerdigKlient() throws MessagingException {
-        imap = new Imap();
-        SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
-        // MAPPE
-        HashMap<Integer, String> map = grensesnitt.visMappe(imap);
-        Folder fra = grensesnitt.velgMappe(map, imap);
-        Folder til = grensesnitt.velgMappe(map, imap);
-        fra.open(Folder.READ_WRITE);
-        fra.open(Folder.READ_WRITE);
-
-        System.out.println("Oppretter Søker...");
-        // SØKER
-        EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, fra, imap);
-        System.out.println("Oppretter behandler..");
-        // BEHANDLER
-        System.out.println("Oppretter lytter...");
-        // LISTENER
-        Lytter lytter = new Lytter(fra, til, 60000, emailSearcher);
-        Thread thread = new Thread(lytter);
-        thread.start();
     }
 
     private static void hentKleint() {

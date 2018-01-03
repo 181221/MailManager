@@ -50,13 +50,14 @@ public class Lytter implements Runnable {
                                 + " Fra " + Arrays.toString(address)
                                 + " Sendt " + msgs[i].getSentDate());
                         if(emailSearcher.subjectExists(subject)){
+                            System.out.println("Mailen inneholder sokeord.. fra listen til " + emailSearcher.getBeskrivelse());
+                            System.out.println("Flytter mailen til mappen " + til.getName());
                             MailUtil.flyttMeldinger(fra, til, new Message[]{msg});
                             if(til.isOpen()){
                                 til.close(false);
                                 til.open(Folder.READ_ONLY);
                             }
-                            System.out.println("Mailen inneholder sokeord..");
-                            System.out.println("Flytter melding til " + til.getName());
+
                         }
 
                     } catch (MessagingException e) {
@@ -84,7 +85,6 @@ public class Lytter implements Runnable {
             if (supportsIdle && fra instanceof IMAPFolder) {
                 IMAPFolder f = (IMAPFolder) fra;
                 f.idle();
-                System.out.println("IDLE done");
             } else {
                 Thread.sleep(freq); // sleep for freq milliseconds
 
