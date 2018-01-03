@@ -6,6 +6,7 @@ import no.pederyo.protokoll.implementasjon.Imap;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 import java.io.Console;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Grensesnitt {
@@ -74,9 +75,28 @@ public class Grensesnitt {
         return pass.equals(pass1);
     }
 
-    public String velgMappe() {
-        System.out.println("Velg en mappe hvor meldingene skal flyttes til.");
-        return in.nextLine();
+    public Folder velgMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException {
+        System.out.println("Vennligst velg en mappe");
+        int i = in.nextInt();
+        Folder folder = null;
+        if(i == 0){
+            System.out.println("Skriv inn navn på mappen");
+            String navn = in.next();
+            folder = imap.opprettFolder(navn);
+        }else {
+            folder = imap.getFolder(map.get(in.nextInt()));
+        }
+        return folder;
+    }
+    public HashMap<Integer, String> visMappe(Imap imap){
+        int i = 1;
+        HashMap<Integer, String> map = new HashMap<>();
+        for(Folder f : imap.getAllFolders()){
+            map.put(i, f.getName());
+            i++;
+        }
+        System.out.println("(" + 0 + ") Opprett ny");
+        return map;
     }
     public String[] opprettSokeListe(){
         System.out.println("\nSkriv inn søkeord skilt med mellomrom..");

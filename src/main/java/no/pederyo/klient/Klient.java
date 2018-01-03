@@ -87,16 +87,6 @@ public class Klient {
             }while(valg != 7);
             }
     }
-    private static Folder velgMappeBehandler(){
-        int i = 0;
-        HashMap<Integer, String> map = new HashMap<>();
-        for(Folder f : imap.getAllFolders()){
-            map.put(i,f.getName());
-            System.out.println("(" + i + ") " +f.getName());
-            i++;
-        }
-        return imap.getFolder(map.get(in.nextInt()));
-    }
 
     private static void soekerMenu(EmailSearcher em) {
 
@@ -104,14 +94,16 @@ public class Klient {
     private static EmailSearcher opprettSoeker() {
         SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
         System.out.println("Velg Mappe du vil søke i ");
-        Folder folder = velgMappeBehandler();
+        HashMap<Integer, String> map = grensesnitt.visMappe(imap);
+        Folder fra = null;
         try {
-            folder.open(Folder.READ_WRITE);
+            fra = grensesnitt.velgMappe(map, imap);
+            fra.open(Folder.READ_WRITE);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        EmailSearcher em = new EmailSearcher(sokeOrd, folder, imap);
-        System.out.println("Legg til en beskrivelse");
+        EmailSearcher em = new EmailSearcher(sokeOrd, fra, imap);
+        System.out.println("Legg til en beskrivelse for denne søkeren");
         in.nextLine();
         em.setBeskrivelse(in.nextLine());
         emailSearcher.add(em);
@@ -166,8 +158,26 @@ public class Klient {
     }
 
 
-    private static void statiskFerdigKlient() {
+    private static void statiskFerdigKlient() throws MessagingException {
         imap = new Imap();
+        SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
+        // MAPPE
+        HashMap<Integer, String> map = grensesnitt.visMappe(imap);
+        Folder fra = grensesnitt.velgMappe(map, imap);
+        Folder til = grensesnitt.velgMappe(map, imap);
+        fra.open(Folder.READ_WRITE);
+        fra.open(Folder.READ_WRITE);
+
+        System.out.println("Oppretter Søker...");
+        // SØKER
+        EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, fra, imap);
+        System.out.println("Oppretter behandler..");
+        // BEHANDLER
+        System.out.println("Oppretter lytter...");
+        // LISTENER
+        Lytter lytter = new Lytter(fra, til, 60000, emailSearcher);
+        Thread thread = new Thread(lytter);
+        thread.start();
     }
 
     private static void hentKleint() {
@@ -178,34 +188,31 @@ public class Klient {
     private static void opprettKlient() throws MessagingException {
         int mailtype = grensesnitt.velgMailType();
         grensesnitt.skrivInnMail();
-        boolean ok = grensesnitt.loggInn();
+        grensesnitt.loggInn();
         imap = new Imap(mailtype);
         smtp = new Smtp(mailtype);
-        if(imap.isHarConnected()){
-            SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
-
-            // MAPPE
-            String mappenavn = grensesnitt.velgMappe();
-            Folder mappe = grensesnitt.opprettMappe(imap, mappenavn);
-            Folder inbox = imap.getFolder("INBOX");
-            mappe.open(Folder.READ_WRITE);
-            inbox.open(Folder.READ_WRITE);
-
-            System.out.println("Oppretter Søker...");
-            // SØKER
-            EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, inbox, imap);
-            System.out.println("Oppretter behandler..");
-            // BEHANDLER
-            System.out.println("Oppretter lytter...");
-            // LISTENER
-            Lytter lytter = new Lytter(inbox, mappe, 60000, emailSearcher);
-            Thread thread = new Thread(lytter);
-            thread.start();
-
-        }else {
+        while(!imap.isHarConnected()){
             System.out.println("Passord eller brukernavn er feil.");
             grensesnitt.loggInn();
         }
+        SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
+        // MAPPE
+        HashMap<Integer, String> map = grensesnitt.visMappe(imap);
+        Folder fra = grensesnitt.velgMappe(map, imap);
+        Folder til = grensesnitt.velgMappe(map, imap);
+        fra.open(Folder.READ_WRITE);
+        fra.open(Folder.READ_WRITE);
+
+        System.out.println("Oppretter Søker...");
+        // SØKER
+        EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, fra, imap);
+        System.out.println("Oppretter behandler..");
+        // BEHANDLER
+        System.out.println("Oppretter lytter...");
+        // LISTENER
+        Lytter lytter = new Lytter(fra, til, 60000, emailSearcher);
+        Thread thread = new Thread(lytter);
+        thread.start();
 
     }
 
