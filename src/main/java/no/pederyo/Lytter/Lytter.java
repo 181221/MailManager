@@ -95,5 +95,21 @@ public class Lytter implements Runnable {
         }
     }
 
+    public Folder getFra() {
+        return fra;
+    }
+
+    public Folder getTil() {
+        return til;
+    }
+
+    public int getFreq() {
+        return freq;
+    }
+
+    public EmailSearcher getEmailSearcher() {
+        return emailSearcher;
+    }
+
 }
 

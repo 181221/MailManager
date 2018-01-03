@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public class SokeOrd {
 
-    private HashSet<String> ordliste;
+    volatile HashSet<String> ordliste;
 
     public  SokeOrd(){
         ordliste = new HashSet<String>();

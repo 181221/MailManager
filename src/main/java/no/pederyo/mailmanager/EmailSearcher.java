@@ -9,7 +9,7 @@ import javax.mail.search.SearchTerm;
 
 public class EmailSearcher {
     private IImap imap;
-    private SokeOrd sokeOrd;
+    volatile SokeOrd sokeOrd;
     private Folder folder;
     private String beskrivelse;
 

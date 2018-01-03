@@ -87,12 +87,14 @@ public class Grensesnitt {
         }
         return folder;
     }
-    public HashMap<Integer, String> visMappe(Imap imap){
+    public HashMap<Integer, String> visMappe(Imap imap) throws InterruptedException {
+        Thread.sleep(300);
         int i = 1;
         HashMap<Integer, String> map = new HashMap<>();
 
         System.out.println("(" + 0 + ") Opprett ny");
         for(Folder f : imap.getAllFolders()){
+            Thread.sleep(100);
             map.put(i, f.getName());
             System.out.println("(" + i + ") " + f.getName());
             i++;
@@ -100,7 +102,7 @@ public class Grensesnitt {
         return map;
     }
     public String[] opprettSokeListe(){
-        System.out.println("\nSkriv inn søkeord skilt med mellomrom..");
+        System.out.println("Skriv inn søkeord skilt med mellomrom..");
         return in.nextLine().split(" ");
 
     }
