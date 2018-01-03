@@ -9,7 +9,7 @@ import javax.mail.search.SearchTerm;
 
 public class EmailSearcher {
     private IImap imap;
-    volatile SokeOrd sokeOrd;
+    private volatile SokeOrd sokeOrd;
     private Folder folder;
     private String beskrivelse;
 
@@ -88,8 +88,8 @@ public class EmailSearcher {
         String subject = tittel.toLowerCase();
         if (subject != null) {
             String[] sub = subject.split(" ");
-            for(int i = 0; i < sub.length; i++) {
-                if (sokeOrd.getOrdliste().contains(sub[i])) {
+            for (String aSub : sub) {
+                if (sokeOrd.getOrdliste().contains(aSub)) {
                     return true;
                 }
             }

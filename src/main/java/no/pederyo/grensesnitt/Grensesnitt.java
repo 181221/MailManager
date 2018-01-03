@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Grensesnitt {
 
-    Scanner in = new Scanner(System.in);
+    private Scanner in = new Scanner(System.in);
 
     private String passordInput(){
         Console cons = System.console();
@@ -77,7 +77,7 @@ public class Grensesnitt {
 
     public Folder velgMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException {
         int i = in.nextInt();
-        Folder folder = null;
+        Folder folder;
         if(i == 0){
             System.out.println("Skriv inn navn på mappen");
             String navn = in.next();

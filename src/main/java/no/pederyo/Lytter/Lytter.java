@@ -38,34 +38,38 @@ public class Lytter implements Runnable {
             public void messagesAdded(MessageCountEvent ev) {
                 Message[] msgs = ev.getMessages();
                 System.out.println("Got " + msgs.length + " new messages");
-                // Just dump out the new messages
                 for (int i = 0; i < msgs.length; i++) {
                     Message msg = msgs[i];
-                    System.out.println("-----");
-                    System.out.println("Message " + msg.getMessageNumber() + ":");
                     try {
-                        Address[] address = msgs[i].getFrom();
-                        String subject = msgs[i].getSubject();
-                        System.out.println("Tittel " + subject
-                                + " Fra " + Arrays.toString(address)
-                                + " Sendt " + msgs[i].getSentDate());
-                        if(emailSearcher.subjectExists(subject)){
-                            System.out.println("Mailen inneholder sokeord.. fra listen til " + emailSearcher.getBeskrivelse());
-                            System.out.println("Flytter mailen til mappen " + til.getName());
-                            MailUtil.flyttMeldinger(fra, til, new Message[]{msg});
-                            if(til.isOpen()){
-                                til.close(false);
-                                til.open(Folder.READ_ONLY);
-                            }
-
+                        skrivUtMeld(msg);
+                        if(emailSearcher.subjectExists(msg.getSubject())){
+                            flyttMeld(msg);
                         }
-
                     } catch (MessagingException e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
+    }
+    private void skrivUtMeld(Message msg) throws MessagingException {
+        System.out.println("-----");
+        System.out.println("Message " + msg.getMessageNumber() + ":");
+        Address[] address = msg.getFrom();
+        String subject = msg.getSubject();
+        System.out.println("Tittel " + subject
+                + " Fra " + Arrays.toString(address)
+                + " Sendt " + msg.getSentDate());
+    }
+
+    private void flyttMeld(Message msg) throws MessagingException {
+        System.out.println("Mailen inneholder sokeord.. fra listen til " + emailSearcher.getBeskrivelse());
+        System.out.println("Flytter mailen til mappen " + til.getName());
+        MailUtil.flyttMeldinger(fra, til, new Message[]{msg});
+        if(til.isOpen()){
+            til.close(false);
+            til.open(Folder.READ_ONLY);
+        }
     }
 
     private void lyttHjelper() throws MessagingException, InterruptedException {
@@ -81,15 +85,12 @@ public class Lytter implements Runnable {
         } catch (MessagingException mex) {
             supportsIdle = false;
         }
-        for (; ; ) {
+        while (true) {
             if (supportsIdle && fra instanceof IMAPFolder) {
                 IMAPFolder f = (IMAPFolder) fra;
                 f.idle();
             } else {
-                Thread.sleep(freq); // sleep for freq milliseconds
-
-                // This is to force the IMAP server to send us
-                // EXISTS notifications.
+                Thread.sleep(freq);
                 fra.getMessageCount();
             }
         }

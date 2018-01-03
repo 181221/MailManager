@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public class SokeOrd {
 
-    volatile HashSet<String> ordliste;
+    private volatile HashSet<String> ordliste;
 
     public  SokeOrd(){
         ordliste = new HashSet<String>();
@@ -30,7 +30,7 @@ public class SokeOrd {
         for(int i = 0; i < cpord.length; i++){
             String meld = ord[i];
             if(meld != null){
-                meld.toLowerCase();
+                meld = meld.toLowerCase();
                 cpord[i] = meld;
             }
         }
