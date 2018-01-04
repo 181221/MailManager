@@ -27,6 +27,7 @@ public class ManagerHelper {
     private static Smtp smtp;
     private static ArrayList<Lytter> lyttere = new ArrayList<>();
     private static ArrayList<Thread> traader = new ArrayList<>();
+    public static String FILNAVN;
 
 
     public static void mineLyttere() {
@@ -61,8 +62,11 @@ public class ManagerHelper {
         Thread.sleep(1000);
 
         // SKRIVER
-
-        CSVSkriver.skrivTilcsv(CSVSkriver.startWriter(), listetilcsv, sokeord);
+        if (FILNAVN == null){
+            FILNAVN = in.nextLine();
+            //HVILKEN PROFIL VIL DU LAGRE LYTTEREN PÅ
+        }
+        CSVSkriver.skrivTilcsv(CSVSkriver.startWriter("settings" + FILNAVN), listetilcsv, sokeord);
 
         // SØKER
         System.out.println("Oppretter Søker...");
@@ -106,8 +110,10 @@ public class ManagerHelper {
             grensesnitt.loggInn();
         }
         System.out.println("skriv inn et navn til filen");
-        String filnavn = in.nextLine();
-        Krypterer.skrivTilFil(mailtype, filnavn);
+        FILNAVN = in.nextLine();
+        Krypterer.skrivTilFil(mailtype, FILNAVN);
+        String temp = "settings" + FILNAVN;
+        CSVSkriver.lagConfig(temp);
     }
     public static void ferdigKlient() {
         imap = new Imap();
