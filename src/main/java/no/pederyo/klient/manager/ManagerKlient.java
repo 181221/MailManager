@@ -2,6 +2,8 @@ package no.pederyo.klient.manager;
 
 import no.pederyo.Lytter.Lytter;
 import no.pederyo.crypt.Krypterer;
+import no.pederyo.klient.CSVSkriver;
+import no.pederyo.protokoll.implementasjon.Imap;
 
 import javax.mail.MessagingException;
 import java.io.File;
@@ -25,14 +27,18 @@ public class ManagerKlient {
                     managerMenu();
                     break;
                 case 2:
-                    lastInnbrukerinfo();
-                    ManagerHelper.setupKlient();
+                    //lastInnbrukerinfo();
+                    Imap imap = new Imap();
+                    CSVSkriver.lesFraSokeord(imap);
+                    //ManagerHelper.setupKlient();
                     managerMenu();
                     break;
                 case 4:
-                    System.out.println("tester");
+                    ManagerHelper.ferdigKlient();
+                    ManagerHelper.setupKlient();
+                    /*System.out.println("tester");
                     String filnavnn = "hvlmail";
-                    Krypterer.skrivTilFil(1, filnavnn);
+                    Krypterer.skrivTilFil(1, filnavnn);*/
             }
         }while(valg != 3);
     }

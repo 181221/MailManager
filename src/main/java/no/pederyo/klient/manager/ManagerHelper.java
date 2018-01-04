@@ -4,6 +4,7 @@ import no.pederyo.Attributter;
 import no.pederyo.Lytter.Lytter;
 import no.pederyo.crypt.Krypterer;
 import no.pederyo.grensesnitt.Grensesnitt;
+import no.pederyo.klient.CSVSkriver;
 import no.pederyo.mailmanager.EmailSearcher;
 import no.pederyo.mailmanager.SokeOrd;
 import no.pederyo.protokoll.implementasjon.Imap;
@@ -11,6 +12,7 @@ import no.pederyo.protokoll.implementasjon.Smtp;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -35,32 +37,48 @@ public class ManagerHelper {
 
 
     public static void setupKlient() throws MessagingException, InterruptedException {
+        ArrayList<String> listetilcsv = new ArrayList<>();
+
         System.out.println("Legg til en søke liste");
-        SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
+        String[] sokeord = grensesnitt.opprettSokeListe();
+        SokeOrd sokeOrd = new SokeOrd(sokeord);
+
         System.out.println("Vennligst skriv inn en beskrivelse til søkemotoren.");
         String beskrivelse = in.nextLine();
-        System.out.println("Venligst velg en mappe fra mailen din.");
+        listetilcsv.add(beskrivelse);
+
         // MAPPE
+        System.out.println("Venligst velg en mappe fra mailen din.");
         HashMap<Integer, String> map = grensesnitt.visMappe(imap);
         Folder fra = grensesnitt.velgMappe(map, imap);
         System.out.println("Velg mappe du vil flytte meldinger til.");
         Folder til = grensesnitt.velgMappe(map, imap);
+        listetilcsv.add(fra.getName());
+        listetilcsv.add(til.getName());
         fra.open(Folder.READ_WRITE);
         til.open(Folder.READ_WRITE);
+
         Thread.sleep(1000);
-        System.out.println("Oppretter Søker...");
+
+        // SKRIVER
+
+        CSVSkriver.skrivTilcsv(CSVSkriver.startWriter(), listetilcsv, sokeord);
+
         // SØKER
+        System.out.println("Oppretter Søker...");
         EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, fra, imap);
         emailSearcher.setBeskrivelse(beskrivelse);
+
         Thread.sleep(1000);
-        System.out.println("Oppretter lytter...");
+
         // LISTENER
+        System.out.println("Oppretter lytter...");
         opprettLytter(fra, til , emailSearcher);
         dance();
     }
 
     private static void dance() throws InterruptedException {
-        for (int i = 1; i < 50; i ++){
+        for (int i = 1; i < 10; i ++){
             Thread.sleep(100);
             String printut = "|                 |\r";
             for(int k = 0; k < i; k ++){
