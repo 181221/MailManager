@@ -75,15 +75,48 @@ public class Grensesnitt {
         return pass.equals(pass1);
     }
 
-    public Folder velgMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException {
-        int i = in.nextInt();
-        Folder folder;
+    private int parseInt(){
+        int i = -1;
+        try {
+            i = Integer.parseInt(in.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("feil prøv igjen.");
+        }
+        return i;
+    }
+    private Folder tryGetFolder(Imap imap, HashMap<Integer,String> map, int i) {
+        Folder folder = null;
+            try {
+                folder = imap.getFolder(map.get(i));
+            }catch (NullPointerException e){
+                System.out.println("mappen eksisterer ikke skriv på nytt." + e.getMessage());
+            }
+        return folder;
+    }
+
+    public Folder velgMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException, InterruptedException {
+        int i = parseInt();
+        while(i == -1){
+            i = parseInt();
+        }
+        Folder folder = null;
         if(i == 0){
             System.out.println("Skriv inn navn på mappen");
-            String navn = in.next();
+            String navn = in.nextLine();
+            while(navn == null){
+                System.out.println("Skriv inn et gyldig navn");
+                navn = in.nextLine();
+            }
+            System.out.println("Oppretter mappen..");
+            Thread.sleep(200);
             folder = imap.opprettFolder(navn);
         }else {
-            folder = imap.getFolder(map.get(i));
+            folder = tryGetFolder(imap, map, i);
+            while (folder == null){
+                System.out.println("mappen finnes ikke. Prøv på nytt.");
+                i = parseInt();
+                folder = tryGetFolder(imap, map, i);
+            }
         }
         return folder;
     }

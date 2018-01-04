@@ -152,6 +152,8 @@ public class Imap implements IProtokoll, IConnect, IImap {
             }
         } catch (MessagingException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
         return nyfolder;
     }

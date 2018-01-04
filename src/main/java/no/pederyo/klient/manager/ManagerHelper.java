@@ -25,11 +25,18 @@ public class ManagerHelper {
     private static ArrayList<Lytter> lyttere = new ArrayList<>();
     private static ArrayList<Thread> traader = new ArrayList<>();
 
+
+    public static void mineLyttere() {
+        for (Lytter l : lyttere) {
+            System.out.println(l.getEmailSearcher().getBeskrivelse());
+        }
+    }
+
+
     public static void setupKlient() throws MessagingException, InterruptedException {
         System.out.println("Legg til en søke liste");
         SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
         System.out.println("Vennligst skriv inn en beskrivelse til søkemotoren.");
-        in.nextLine();
         String beskrivelse = in.nextLine();
         System.out.println("Venligst velg en mappe fra mailen din.");
         // MAPPE
@@ -39,16 +46,27 @@ public class ManagerHelper {
         Folder til = grensesnitt.velgMappe(map, imap);
         fra.open(Folder.READ_WRITE);
         til.open(Folder.READ_WRITE);
-
+        Thread.sleep(1000);
         System.out.println("Oppretter Søker...");
         // SØKER
         EmailSearcher emailSearcher = new EmailSearcher(sokeOrd, fra, imap);
         emailSearcher.setBeskrivelse(beskrivelse);
-
+        Thread.sleep(1000);
         System.out.println("Oppretter lytter...");
         // LISTENER
         opprettLytter(fra, til , emailSearcher);
+        dance();
+    }
 
+    private static void dance() throws InterruptedException {
+        for (int i = 1; i < 50; i ++){
+            Thread.sleep(100);
+            String printut = "|                 |\r";
+            for(int k = 0; k < i; k ++){
+                printut += '=';
+            }
+            System.out.print(printut);
+        }
     }
 
     public static void opprettLytter(Folder fra, Folder til, EmailSearcher es){
@@ -73,4 +91,53 @@ public class ManagerHelper {
         imap = new Imap();
     }
 
+    public static void endreLytter(Lytter lytter) {
+        String menu = "1: Søkeord \n2: Mapper \n3 Avslutt";
+        int valg;
+        do {
+            System.out.println(menu);
+            valg = in.nextInt();
+            switch (valg){
+                case 1:
+                    ManagerHelper.mineLyttere();
+                    break;
+                case 2:
+                    Lytter l = ManagerHelper.hentLytter();
+                    ManagerHelper.endreLytter(l);
+                    break;
+            }
+        }while(valg != 3);
+    }
+
+    public static Lytter hentLytter() {
+        return null;
+    }
+
+    public static void slettLytter(Lytter lytter) {
+    }
+
+
+    public static void organisermeny() {
+        String menu = "1: Mine Lyttere\n2: Endre Lytter \n3: Lag ny Lytter \n4: Slett Lytter \n5 Organiser \n6 Avslutt";
+        int valg;
+        do {
+            System.out.println(menu);
+            valg = in.nextInt();
+            switch (valg){
+                case 1:
+                    System.out.println("Legg til søkeord i slkelisten");
+                    SokeOrd sokeOrd = new SokeOrd(grensesnitt.opprettSokeListe());
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+            }
+        }while(valg != 6);
+
+    }
 }

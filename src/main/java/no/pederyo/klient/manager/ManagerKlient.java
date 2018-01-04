@@ -1,11 +1,10 @@
 package no.pederyo.klient.manager;
 
+import no.pederyo.Lytter.Lytter;
+
 import javax.mail.MessagingException;
 import java.util.Scanner;
 
-/**
- * Created by Peder on 03.01.2018.
- */
 public class ManagerKlient {
 
     private static Scanner in = new Scanner(System.in);
@@ -32,27 +31,38 @@ public class ManagerKlient {
     }
 
     private static void managerMenu() {
-        String menu = "1: Dine Lyttere\n2: Endre Lytter \n3: LeggTil Lytter \n4: Slett Lytter\n5: velg behandler \n6 Legg til lytter \n7 Avslutt";
+        String menu = "1: Mine Lyttere\n2: Endre Lytter \n3: Lag ny Lytter \n4: Slett Lytter \n5 Organiser \n6 Avslutt";
         int valg;
             do {
                 System.out.println(menu);
                 valg = in.nextInt();
                 switch (valg){
                     case 1:
+                        ManagerHelper.mineLyttere();
                         break;
                     case 2:
+                        Lytter l = ManagerHelper.hentLytter();
+                        ManagerHelper.endreLytter(l);
                         break;
                     case 3:
+                        try {
+                            ManagerHelper.setupKlient();
+                        } catch (MessagingException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 4:
+                        ManagerHelper.slettLytter(ManagerHelper.hentLytter());
                         break;
                     case 5:
-                        break;
-                    case 6:
+                        ManagerHelper.organisermeny();
                         break;
                 }
-            }while(valg != 7);
+            }while(valg != 6);
     }
+
 
 
 }
