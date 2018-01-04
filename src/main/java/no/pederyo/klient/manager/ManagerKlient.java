@@ -4,6 +4,8 @@ import no.pederyo.Lytter.Lytter;
 import no.pederyo.crypt.Krypterer;
 
 import javax.mail.MessagingException;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.Scanner;
 
 public class ManagerKlient {
@@ -18,19 +20,19 @@ public class ManagerKlient {
             valg = in.nextInt();
             switch (valg){
                 case 1:
-
-                    Krypterer.skrivTilFil(1);
-                    Krypterer.deKrypter();
-                    System.out.println("hei");
                     ManagerHelper.opprettKlient();
                     ManagerHelper.setupKlient();
                     managerMenu();
                     break;
                 case 2:
-                    ManagerHelper.ferdigKlient();
+                    lastInnbrukerinfo();
                     ManagerHelper.setupKlient();
                     managerMenu();
                     break;
+                case 4:
+                    System.out.println("tester");
+                    String filnavnn = "hvlmail";
+                    Krypterer.skrivTilFil(1, filnavnn);
             }
         }while(valg != 3);
     }
@@ -66,6 +68,32 @@ public class ManagerKlient {
                         break;
                 }
             }while(valg != 6);
+    }
+    public static void lastInnbrukerinfo(){
+        File files[] = new File(".").listFiles();
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".csv")) {
+                System.out.println(file.getName());
+            }
+        }
+        System.out.println("===========");
+        System.out.println("Skriv inn filnavn");
+        String filnavn = null;
+        boolean ok = false;
+        in.nextLine();
+        while (!ok){
+            filnavn = in.nextLine();
+            for( File file : files) {
+                if(file.getName().equals(filnavn)){
+                    ok = true;
+                }
+            }
+            System.out.println("Filen eksisterer ikke skriv inn riktig.");
+        }
+        if(!filnavn.endsWith(".csv")){
+            filnavn += ".csv";
+        }
+        Krypterer.hentInfoFrafil(filnavn);
     }
 
 

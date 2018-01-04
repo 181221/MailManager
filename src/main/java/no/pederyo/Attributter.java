@@ -7,7 +7,7 @@ public class Attributter {
     public static String
             FRAMAIL = System.getenv("MAIL_FRA"),
             PASSORD = System.getenv("MAIL_PW");
-
+    public static int FRATYPE = -1;
     // DEFAULT SokeOrd
     public static final String[] SOKEORD = new String[] {"kvittering",
             "ordre", "ordrebekreftelse",
@@ -15,6 +15,9 @@ public class Attributter {
 
     private static String bruker, passord;
 
+    public static void setFRATYPE(int FRATYPE) {
+        Attributter.FRATYPE = FRATYPE;
+    }
 
     public static void setFRAMAIL(String FRAMAIL) {
         Attributter.FRAMAIL = FRAMAIL;

@@ -1,5 +1,6 @@
 package no.pederyo.klient.manager;
 
+import no.pederyo.Attributter;
 import no.pederyo.Lytter.Lytter;
 import no.pederyo.crypt.Krypterer;
 import no.pederyo.grensesnitt.Grensesnitt;
@@ -86,15 +87,15 @@ public class ManagerHelper {
             System.out.println("Passord eller brukernavn er feil.");
             grensesnitt.loggInn();
         }
-        Krypterer.skrivTilFil(mailtype);
-        System.out.println("Skriver til fil...");
-        System.out.println("=============");
-        System.out.println("Leser fra fil=====");
-        Krypterer.lesFraFil();
-        System.out.println("=============");
+        System.out.println("skriv inn et navn til filen");
+        String filnavn = in.nextLine();
+        Krypterer.skrivTilFil(mailtype, filnavn);
     }
     public static void ferdigKlient() {
         imap = new Imap();
+    }
+    public static void ferdigKlient2(){
+        imap = new Imap(Attributter.FRATYPE);
     }
 
     public static void endreLytter(Lytter lytter) {

@@ -4,6 +4,8 @@ import biz.source_code.crypto.IdeaFileEncryption;
 import no.pederyo.Attributter;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * Created by Peder on 04.01.2018.
@@ -13,22 +15,23 @@ public class Krypterer {
     private static final String COMMA_DELIMITER = ",";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String FILE_HEADER = "username,password,mailtype";
-    public static void lesFraFil(){
-        deKrypter();
-    }
+
 
     public static void main(String[] args) {
-        skrivTilFil(1);
-        deKrypter();
+        String filnavn = "hvlmail";
+        skrivTilFil(1,filnavn);
+        hentInfoFrafil(filnavn);
     }
 
-    public static void skrivTilFil(int mailtype) {
+    public static void hentInfoFrafil(String filnavn) {
+        deKrypter(filnavn);
+    }
+
+    public static void skrivTilFil(int mailtype, String bruker) {
         File temp = null;
         try {
             temp = File.createTempFile("123", ".csv");
             BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
-            Attributter.setPASSORD("hei");
-            Attributter.setFRAMAIL("hei");
             bw.append(FILE_HEADER);
             bw.append(NEW_LINE_SEPARATOR);
             bw.append(Attributter.FRAMAIL);
@@ -37,7 +40,7 @@ public class Krypterer {
             bw.append(COMMA_DELIMITER);
             bw.append(String.valueOf(mailtype));
             bw.close();
-            krypter(temp);
+            krypter(temp, bruker);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -47,27 +50,28 @@ public class Krypterer {
         }
     }
 
-    public static void krypter(File temp){
+    private static void krypter(File temp, String bruker){
         try {
-            PrintWriter writer = new PrintWriter("bruker.csv", "UTF-8");
+            PrintWriter writer = new PrintWriter(bruker +".csv", "UTF-8");
             writer.close();
-            IdeaFileEncryption.cryptFile(String.valueOf(temp), "bruker.csv", "sesame", true, IdeaFileEncryption.Mode.CBC);
+            IdeaFileEncryption.cryptFile(String.valueOf(temp), bruker +".csv", "sesame", true, IdeaFileEncryption.Mode.CBC);
             temp.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static boolean deKrypter(){
+    private static boolean deKrypter(String filnavn){
         File temp = null;
         try {
             temp = File.createTempFile("1234112", ".csv");
-            IdeaFileEncryption.cryptFile("bruker.csv", String.valueOf(temp), "sesame", false, IdeaFileEncryption.Mode.CBC);
+            IdeaFileEncryption.cryptFile(filnavn, String.valueOf(temp), "sesame", false, IdeaFileEncryption.Mode.CBC);
             BufferedReader br = null;
             br = new BufferedReader(new FileReader(temp));
-            String linje = null;
-            while ((linje= br.readLine()) != null) {
-                System.out.println(linje);
-            }
+            br.readLine();
+            String[] linje = br.readLine().split(",");
+            Attributter.setFRAMAIL(linje[0]);
+            Attributter.setPASSORD(linje[1]);
+            Attributter.setFRATYPE(Integer.parseInt(linje[2]));
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
