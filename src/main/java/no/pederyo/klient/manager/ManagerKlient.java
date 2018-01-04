@@ -1,6 +1,7 @@
 package no.pederyo.klient.manager;
 
 import no.pederyo.Lytter.Lytter;
+import no.pederyo.crypt.Krypterer;
 
 import javax.mail.MessagingException;
 import java.util.Scanner;
@@ -17,6 +18,10 @@ public class ManagerKlient {
             valg = in.nextInt();
             switch (valg){
                 case 1:
+
+                    Krypterer.skrivTilFil(1);
+                    Krypterer.deKrypter();
+                    System.out.println("hei");
                     ManagerHelper.opprettKlient();
                     ManagerHelper.setupKlient();
                     managerMenu();

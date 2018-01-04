@@ -1,6 +1,7 @@
 package no.pederyo.klient.manager;
 
 import no.pederyo.Lytter.Lytter;
+import no.pederyo.crypt.Krypterer;
 import no.pederyo.grensesnitt.Grensesnitt;
 import no.pederyo.mailmanager.EmailSearcher;
 import no.pederyo.mailmanager.SokeOrd;
@@ -12,7 +13,6 @@ import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-
 /**
  * Created by Peder on 03.01.2018.
  */
@@ -86,6 +86,12 @@ public class ManagerHelper {
             System.out.println("Passord eller brukernavn er feil.");
             grensesnitt.loggInn();
         }
+        Krypterer.skrivTilFil(mailtype);
+        System.out.println("Skriver til fil...");
+        System.out.println("=============");
+        System.out.println("Leser fra fil=====");
+        Krypterer.lesFraFil();
+        System.out.println("=============");
     }
     public static void ferdigKlient() {
         imap = new Imap();
