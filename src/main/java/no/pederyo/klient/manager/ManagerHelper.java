@@ -2,17 +2,14 @@ package no.pederyo.klient.manager;
 
 import no.pederyo.Attributter;
 import no.pederyo.Lytter.Lytter;
-import no.pederyo.crypt.Krypterer;
 import no.pederyo.grensesnitt.Grensesnitt;
 import no.pederyo.klient.CSVSkriver;
 import no.pederyo.mailmanager.EmailSearcher;
 import no.pederyo.mailmanager.SokeOrd;
 import no.pederyo.protokoll.implementasjon.Imap;
-import no.pederyo.protokoll.implementasjon.Smtp;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -23,12 +20,9 @@ public class ManagerHelper {
 
     private static Grensesnitt grensesnitt = new Grensesnitt();
     private static Scanner in = new Scanner(System.in);
-    private static Imap imap;
-    private static Smtp smtp;
     private static ArrayList<Lytter> lyttere = new ArrayList<>();
     private static ArrayList<Thread> traader = new ArrayList<>();
-    public static String FILNAVN;
-
+    public static String BRUKER_FILNAVN, SETTINGS_FILNAVN;
 
     public static void mineLyttere() {
         for (Lytter l : lyttere) {
@@ -37,9 +31,8 @@ public class ManagerHelper {
     }
 
 
-    public static void setupKlient() throws MessagingException, InterruptedException {
+    public static void setupKlient(Imap imap) throws MessagingException, InterruptedException {
         ArrayList<String> listetilcsv = new ArrayList<>();
-
         System.out.println("Legg til en søke liste");
         String[] sokeord = grensesnitt.opprettSokeListe();
         SokeOrd sokeOrd = new SokeOrd(sokeord);
@@ -61,12 +54,8 @@ public class ManagerHelper {
 
         Thread.sleep(1000);
 
-        // SKRIVER
-        if (FILNAVN == null){
-            FILNAVN = in.nextLine();
-            //HVILKEN PROFIL VIL DU LAGRE LYTTEREN PÅ
-        }
-        CSVSkriver.skrivTilcsv(CSVSkriver.startWriter("settings" + FILNAVN), listetilcsv, sokeord);
+
+        CSVSkriver.skrivTilcsv(CSVSkriver.startWriter(ManagerKlient.SETTINGS_FILNAVN), listetilcsv, sokeord);
 
         // SØKER
         System.out.println("Oppretter Søker...");
@@ -99,28 +88,7 @@ public class ManagerHelper {
         lyttere.add(lytter);
         traader.add(thread);
     }
-    public static void opprettKlient() {
-        int mailtype = grensesnitt.velgMailType();
-        grensesnitt.skrivInnMail();
-        grensesnitt.loggInn();
-        imap = new Imap(mailtype);
-        smtp = new Smtp(mailtype);
-        while(!imap.isHarConnected()){
-            System.out.println("Passord eller brukernavn er feil.");
-            grensesnitt.loggInn();
-        }
-        System.out.println("skriv inn et navn til filen");
-        FILNAVN = in.nextLine();
-        Krypterer.skrivTilFil(mailtype, FILNAVN);
-        String temp = "settings" + FILNAVN;
-        CSVSkriver.lagConfig(temp);
-    }
-    public static void ferdigKlient() {
-        imap = new Imap();
-    }
-    public static void ferdigKlient2(){
-        imap = new Imap(Attributter.FRATYPE);
-    }
+
 
     public static void endreLytter(Lytter lytter) {
         String menu = "1: Søkeord \n2: Mapper \n3 Avslutt";

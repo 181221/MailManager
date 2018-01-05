@@ -75,6 +75,7 @@ public class CSVSkriver {
                 System.out.println("Oppretter lytter... for " + emailSearcher.getBeskrivelse());
                 // LISTENER
                 opprettLytter(fra, til , emailSearcher);
+
             }
             } catch (FileNotFoundException e) {
             System.out.println("Du har ikke en config ennå. Oppretter en...");
