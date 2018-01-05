@@ -23,6 +23,8 @@ public class Grensesnitt {
         }
         return passord;
     }
+
+
     public int velgMailType(){
         System.out.println("Velg Mail Klient");
 
@@ -44,6 +46,8 @@ public class Grensesnitt {
         }
         return godkjent;
     }
+
+
     public String skrivInnMail() {
         System.out.println("Skriv inn din mail <example@exaple.com>");
         String mail = in.nextLine();
@@ -51,9 +55,12 @@ public class Grensesnitt {
         Attributter.setFRAMAIL(mail);
         return mail;
     }
+
+
     private boolean passValidering(String pass) {
         return pass != null && !pass.equals(" ");
     }
+
 
     private boolean authorisering() {
         String password = passordInput();
@@ -71,9 +78,11 @@ public class Grensesnitt {
         return false;
     }
 
+
     private static boolean godkjenn(String pass, String pass1) {
         return pass.equals(pass1);
     }
+
 
     private int parseInt(){
         int i = -1;
@@ -84,6 +93,8 @@ public class Grensesnitt {
         }
         return i;
     }
+
+
     private Folder tryGetFolder(Imap imap, HashMap<Integer,String> map, int i) {
         Folder folder = null;
             try {
@@ -94,7 +105,8 @@ public class Grensesnitt {
         return folder;
     }
 
-    public Folder velgMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException, InterruptedException {
+
+    public Folder velgLytterMappe(HashMap<Integer, String> map, Imap imap) throws MessagingException, InterruptedException {
         int i = parseInt();
         while(i == -1){
             i = parseInt();
@@ -120,6 +132,8 @@ public class Grensesnitt {
         }
         return folder;
     }
+
+
     public HashMap<Integer, String> visMappe(Imap imap) throws InterruptedException {
         Thread.sleep(300);
         int i = 1;
@@ -134,24 +148,12 @@ public class Grensesnitt {
         }
         return map;
     }
+
+
     public String[] opprettSokeListe(){
         System.out.println("Skriv inn søkeord skilt med mellomrom..");
         return in.nextLine().split(" ");
 
-    }
-    public Imap quickSetup() {
-        Attributter.setFRAMAIL(Attributter.FRAMAIL);
-        Attributter.setPASSORD(Attributter.PASSORD);
-        return new Imap();
-    }
-    public Folder opprettMappe(Imap imap, String mappenavn) throws MessagingException {
-        Folder mappe;
-        if(!(imap.getFolder(mappenavn).exists())){
-            mappe = imap.opprettFolder(mappenavn);
-        }else {
-            mappe = imap.getFolder(mappenavn);
-        }
-        return mappe;
     }
 
 }

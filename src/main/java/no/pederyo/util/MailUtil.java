@@ -1,4 +1,4 @@
-package no.pederyo.mailmanager;
+package no.pederyo.util;
 
 import javax.mail.*;
 import javax.mail.Flags.Flag;

@@ -1,8 +1,8 @@
-package no.pederyo.Lytter;
+package no.pederyo.mailmanager;
 
 import com.sun.mail.imap.IMAPFolder;
 import no.pederyo.mailmanager.EmailSearcher;
-import no.pederyo.mailmanager.MailUtil;
+import no.pederyo.util.MailUtil;
 
 import javax.mail.*;
 import javax.mail.event.MessageCountAdapter;

@@ -1,5 +1,6 @@
 package no.pederyo.mailmanager;
 
+import no.pederyo.modell.SokeOrd;
 import org.junit.Before;
 import org.junit.Test;
 

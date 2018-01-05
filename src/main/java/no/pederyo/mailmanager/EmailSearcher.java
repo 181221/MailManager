@@ -1,5 +1,6 @@
 package no.pederyo.mailmanager;
 
+import no.pederyo.modell.SokeOrd;
 import no.pederyo.protokoll.IImap;
 import javax.mail.Address;
 import javax.mail.Folder;

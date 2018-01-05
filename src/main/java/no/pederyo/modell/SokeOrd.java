@@ -1,4 +1,4 @@
-package no.pederyo.mailmanager;
+package no.pederyo.modell;
 
 import no.pederyo.Attributter;
 
@@ -9,9 +9,8 @@ public class SokeOrd {
 
     private volatile HashSet<String> ordliste;
 
-    public  SokeOrd(){
+    public SokeOrd(){
         ordliste = new HashSet<String>();
-        ordliste.addAll(Arrays.asList(Attributter.SOKEORD));
     }
 
     public SokeOrd(String[] liste){

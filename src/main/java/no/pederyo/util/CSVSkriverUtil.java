@@ -1,22 +1,26 @@
-package no.pederyo.klient;
+package no.pederyo.util;
+import no.pederyo.Attributter;
+import no.pederyo.klient.manager.ManagerHelper;
 import no.pederyo.mailmanager.EmailSearcher;
-import no.pederyo.mailmanager.SokeOrd;
+import no.pederyo.modell.SokeOrd;
 import no.pederyo.protokoll.implementasjon.Imap;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 import java.io.*;
 import java.util.ArrayList;
-import static no.pederyo.klient.manager.ManagerHelper.opprettLytter;
 
 /**
  * Created by Peder on 04.01.2018.
  */
-public class CSVSkriver {
+public class CSVSkriverUtil {
+
+
     private static final String FILE_HEADER = "SokeListe,Beskrivelse,framappe,tilmappe";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String COMMA_DELIMITER = ",";
     private static String FIL;
+
 
     public static FileWriter startWriter(String navn) {
         FileWriter fileWriter = null;
@@ -32,6 +36,7 @@ public class CSVSkriver {
         }
         return fileWriter;
     }
+
 
     public static void skrivTilcsv(FileWriter fw, ArrayList<String> liste, String[] bewritten){
         try {
@@ -50,7 +55,13 @@ public class CSVSkriver {
         }
     }
 
-    public static boolean lesFraSokeord(Imap imap, String filnavn){
+
+    public static void hentBrukerInfoFrafil(String filnavn) {
+        KryptererUtil.deKrypter(filnavn);
+    }
+
+
+    public static boolean hentLyttereFraFil(Imap imap, String filnavn){
         BufferedReader fileReader = null;
         try {
             ArrayList<String> sokeord = new ArrayList<>();
@@ -74,7 +85,7 @@ public class CSVSkriver {
                 Thread.sleep(1000);
                 System.out.println("Oppretter lytter... for " + emailSearcher.getBeskrivelse());
                 // LISTENER
-                opprettLytter(fra, til , emailSearcher);
+                ManagerHelper.opprettLytter(fra, til , emailSearcher);
 
             }
             } catch (FileNotFoundException e) {
@@ -90,6 +101,31 @@ public class CSVSkriver {
         return true;
     }
 
+
+    public static void skrivBrukerTilFil(int mailtype, String bruker) {
+        File temp = null;
+        try {
+            temp = File.createTempFile("123", ".csv");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+            bw.append(FILE_HEADER);
+            bw.append(NEW_LINE_SEPARATOR);
+            bw.append(Attributter.FRAMAIL);
+            bw.append(COMMA_DELIMITER);
+            bw.append(Attributter.PASSORD);
+            bw.append(COMMA_DELIMITER);
+            bw.append(String.valueOf(mailtype));
+            bw.close();
+            KryptererUtil.krypter(temp, bruker);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void lagConfig(String filnavn) {
         FIL = filnavn;
         FileWriter fileWriter = null;
@@ -97,6 +133,19 @@ public class CSVSkriver {
             fileWriter = new FileWriter(FIL, true);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+
+    public static void dance() throws InterruptedException {
+        for (int i = 1; i < 10; i ++){
+            Thread.sleep(100);
+            String printut = "|                 |\r";
+            for(int k = 0; k < i; k ++){
+                printut += '=';
+            }
+            System.out.print(printut);
         }
     }
 }

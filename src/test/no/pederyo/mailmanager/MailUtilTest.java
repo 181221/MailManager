@@ -3,6 +3,7 @@ package no.pederyo.mailmanager;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import no.pederyo.stub.ImapStub;
+import no.pederyo.util.MailUtil;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
