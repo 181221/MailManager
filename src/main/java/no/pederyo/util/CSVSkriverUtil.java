@@ -100,7 +100,10 @@ public class CSVSkriverUtil {
         }
         return true;
     }
+    public static void skrivBrukerTilDb(int mailtype, String bruker) {
 
+
+    }
 
     public static void skrivBrukerTilFil(int mailtype, String bruker) {
         File temp = null;

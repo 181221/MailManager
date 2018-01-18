@@ -1,7 +1,5 @@
 package no.pederyo.modell;
 
-import no.pederyo.Attributter;
-
 import java.util.Arrays;
 import java.util.HashSet;
 

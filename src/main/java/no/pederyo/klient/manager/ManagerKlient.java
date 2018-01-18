@@ -8,7 +8,8 @@ import no.pederyo.protokoll.implementasjon.Imap;
 import no.pederyo.protokoll.implementasjon.Smtp;
 import no.pederyo.util.CSVSkriverUtil;
 import java.util.Scanner;
-
+import org.mindrot.jbcrypt.BCrypt;
+import java.sql.*;
 import static no.pederyo.Attributter.BRUKER_FILNAVN;
 import static no.pederyo.Attributter.SETTINGS_FILNAVN;
 
@@ -43,8 +44,6 @@ public class ManagerKlient {
                         Meny.lytterMenu(imap);
                     }
                     break;
-                case 4:
-                    CSVSkriverUtil.skrivBrukerTilFil(1, "filnavn");
             }
 
         } while(valg != 3);
