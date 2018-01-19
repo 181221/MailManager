@@ -1,10 +1,9 @@
-package no.pederyo.klient.manager;
-import no.pederyo.modell.Bruker;
-import org.mindrot.jbcrypt.BCrypt;
+package no.pederyo.dataaccess;
 
-import javax.xml.transform.Result;
 import java.sql.*;
-public class SqlKlient {
+
+public class EmailEAO {
+
     public static final String DRIVER = "jdbc:sqlite:";
 
     private static Connection connect() {
@@ -19,17 +18,6 @@ public class SqlKlient {
         return conn;
     }
 
-    public static void insertBruker(String name) {
-        String sql = "INSERT INTO bruker(name) VALUES(?)";
-
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
     public static void getAlleMailer(int brukerId){
         String sql = "SELECT * FROM email e join bruker b on e.bruker_id = b.id WHERE e.id = ?";
         try (Connection conn = connect();
@@ -64,30 +52,4 @@ public class SqlKlient {
         }
     }
 
-    public static Bruker getBruker(String name){
-        String sql = "SELECT * FROM bruker WHERE name = ?";
-        Bruker b = null;
-        try (Connection conn = connect();
-             PreparedStatement pstmt  = conn.prepareStatement(sql)){
-
-            // set the value
-            pstmt.setString(1, name);
-            //
-            ResultSet rs  = pstmt.executeQuery();
-
-            // loop through the result set
-            while (rs.next()) {
-                 b = new Bruker(rs.getInt("id"),
-                        rs.getString("name"));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return b;
-    }
-
-    public static void main(String[] args) {
-        //Bruker b = getBruker("peder");
-        getAlleMailer(1);
-    }
 }
