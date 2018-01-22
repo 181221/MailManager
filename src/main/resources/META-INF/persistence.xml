@@ -1,0 +1,27 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+
+    <persistence-unit name="hibernate">
+
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+
+        <class>no.pederyo.modell.Bruker</class>
+        <class>no.pederyo.modell.Email</class>
+        <class>no.pederyo.modell.Lytter</class>
+
+        <properties>
+
+            <property name="hibernate.dialect" value="no.database.SQLiteDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="false"/>
+
+            <property name="hibernate.connection.url" value="jdbc:sqlite:manager.db"/>
+            <property name="hibernate.connection.driver_class" value="org.sqlite.JDBC"/>
+
+        </properties>
+
+    </persistence-unit>
+</persistence>

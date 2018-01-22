@@ -30,6 +30,7 @@ public class EmailEAO {
                 System.out.println(rs.getInt("id"));
                 System.out.println(rs.getString("username"));
                 System.out.println(rs.getInt("bruker_id"));
+
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

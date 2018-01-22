@@ -1,15 +1,13 @@
 package no.pederyo.klient.manager;
 
-import no.pederyo.Attributter;
+import no.pederyo.dataaccess.BrukerEAO;
 import no.pederyo.grensesnitt.Grensesnitt;
-import no.pederyo.klient.meny.Meny;
-import no.pederyo.klient.meny.MenyHjelper;
+import no.pederyo.modell.Bruker;
 import no.pederyo.protokoll.implementasjon.Imap;
 import no.pederyo.protokoll.implementasjon.Smtp;
 import no.pederyo.util.CSVSkriverUtil;
 import java.util.Scanner;
-import org.mindrot.jbcrypt.BCrypt;
-import java.sql.*;
+
 import static no.pederyo.Attributter.BRUKER_FILNAVN;
 import static no.pederyo.Attributter.SETTINGS_FILNAVN;
 
@@ -21,28 +19,44 @@ public class ManagerKlient {
     private static Grensesnitt grensesnitt = new Grensesnitt();
 
     public static void main(String[] args)  {
-        String menu = "1: Opprett en mailklient\n2: Last inn en mailklient\n3: Avslutt";
+        String menu = "1: Opprett en mailklient bruker\n2: Logginn\n3: Avslutt";
         int valg;
         do {
             System.out.println(menu);
             valg = in.nextInt();
             switch (valg){
                 case 1:
-                    if(MenyHjelper.harProfil()){
+                    System.out.print("Skriv inn brukernavn");
+                    String brukernavn = in.nextLine();
+                    //valider
+                    Bruker b = BrukerEAO.getBruker(brukernavn);
+                    if(b != null) {
+                        System.out.println("Det eksisterer allerede en bruker med det navnet");
+                    }else {
+                        BrukerEAO.insertBruker(brukernavn);
+                    }
+
+                   /* if(MenyHjelper.harProfil()){
                         System.out.println("Du har allerede en klient.");
                     }else {
                         opprettKlient();
                     }
-                    break;
+                    break*/;
                 case 2:
-                    if(!MenyHjelper.harProfil())
+                    System.out.println("skriv inn brukernavn");
+                    String brukernavnn = in.nextLine();
+                    Bruker bb = BrukerEAO.getBruker(brukernavnn);
+                    if(bb != null) {
+                        //Meny.lytterMenu();
+                    }
+                   /* if(!MenyHjelper.harProfil())
                         System.out.println("Du har ingen Klienter. Vennligst opprett en.");
                     else{
                         String mappe = MenyHjelper.velgBrukerFil();
                         CSVSkriverUtil.hentBrukerInfoFrafil(mappe);
                         imap = new Imap(Attributter.FRATYPE);
-                        Meny.lytterMenu(imap);
-                    }
+                        Meny.lytterMenu(imap);*/
+
                     break;
             }
 

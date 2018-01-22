@@ -45,8 +45,7 @@ public class BrukerEAO {
 
             // loop through the result set
             while (rs.next()) {
-                b = new Bruker(rs.getInt("id"),
-                        rs.getString("name"));
+
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

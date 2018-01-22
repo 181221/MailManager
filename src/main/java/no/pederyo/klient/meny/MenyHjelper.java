@@ -1,5 +1,8 @@
 package no.pederyo.klient.meny;
 
+import no.pederyo.dataaccess.EmailEAO;
+import no.pederyo.modell.Bruker;
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -18,7 +21,10 @@ public class MenyHjelper {
         }
         return finnes;
     }
-
+    public static String velgMailKlient(Bruker b) {
+        EmailEAO.getAlleMailer(b.getId());
+        return null;
+    }
 
     public static String velgBrukerFil(){
         File files[] = new File(".").listFiles();
