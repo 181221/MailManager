@@ -4,6 +4,7 @@ import no.pederyo.Attributter;
 import no.pederyo.protokoll.IConnect;
 import no.pederyo.protokoll.IImap;
 import no.pederyo.protokoll.IProtokoll;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.mail.*;
 import java.util.HashMap;

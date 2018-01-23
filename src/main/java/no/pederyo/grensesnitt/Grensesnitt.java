@@ -2,6 +2,7 @@ package no.pederyo.grensesnitt;
 
 import no.pederyo.Attributter;
 import no.pederyo.protokoll.implementasjon.Imap;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
@@ -67,7 +68,7 @@ public class Grensesnitt {
         String password1 = passordInput();
         if (passValidering(password) && passValidering(password1)) {
             if (godkjenn(password1, password)) {
-                Attributter.setPASSORD(String.valueOf(password));
+                Attributter.setPASSORD(password);
                 return true;
             }else {
                 System.out.println("Passord stemmer ikke");

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Attributter {
+    public static String SALT, HASHPW;
     //       ----  Innlogging  ----
 
     public static String
@@ -26,10 +27,13 @@ public class Attributter {
             new String[]{"Drafts","Important","All Mail","Sent Mail","Starred","Trash"}));
 
 
+    public static String getHASHPW() {
+        return HASHPW;
+    }
 
-
-
-
+    public static void setHASHPW(String HASHPW) {
+        Attributter.HASHPW = HASHPW;
+    }
 
     public static void setBrukerFilnavn(String brukerFilnavn) {
         BRUKER_FILNAVN = brukerFilnavn;
@@ -51,5 +55,11 @@ public class Attributter {
         Attributter.PASSORD = PASSORD;
     }
 
+    public static String getSALT() {
+        return SALT;
+    }
 
+    public static void setSALT(String SALT) {
+        Attributter.SALT = SALT;
+    }
 }

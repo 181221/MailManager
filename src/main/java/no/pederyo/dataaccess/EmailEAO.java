@@ -1,8 +1,18 @@
 package no.pederyo.dataaccess;
 
+import no.pederyo.Attributter;
+import no.pederyo.modell.Bruker;
+import no.pederyo.modell.Email;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.RollbackException;
+import javax.smartcardio.ATR;
 import java.sql.*;
 
 public class EmailEAO {
+
+
 
     public static final String DRIVER = "jdbc:sqlite:";
 
@@ -53,4 +63,27 @@ public class EmailEAO {
         }
     }
 
+    public static Email getMail(EntityManager em, int id) {
+        Email e = em.find(Email.class, id);
+        return e;
+    }
+
+    public static void opprettMail(EntityManager em, Bruker b) {
+        Email e = new Email();
+        e.setMailtype(Attributter.FRATYPE);
+        e.setBrukerByBrukerId(b);
+        e.setUsername(Attributter.FRAMAIL);
+        e.setPassord(Attributter.PASSORD);
+        e.setSalt(Attributter.SALT);
+
+        try {
+            if(!em.getTransaction().isActive()){
+                em.getTransaction().begin();
+            }
+            em.persist(e);
+            em.getTransaction().commit();
+        } catch (RollbackException ek) {
+            em.getTransaction().rollback();
+        }
+    }
 }

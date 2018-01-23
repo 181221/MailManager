@@ -34,8 +34,9 @@ INSERT INTO email (username, passord, salt, mailtype, bruker_id) VALUES ("peder@
 INSERT INTO email (username, passord, salt, mailtype, bruker_id) VALUES ("gunnar@gmail.com", "asasas", "1234", -1, 2);
 INSERT INTO lytter (sokeliste, beskrivelse, mappe_fra, mappe_til, email_id) VALUES ("Kvitteringer ordre bekreftelse", "lytter for beskrivelse", "INBOX", "tester", 1);
 INSERT INTO lytter (sokeliste, beskrivelse, mappe_fra, mappe_til, email_id) VALUES ("Kvitteringer ordre bekreftelse", "lytter for gunnar", "INBOX", "tester", 2);*/
+/*
 INSERT INTO email (username, passord, salt, mailtype, bruker_id) VALUES ("peder@gmail.com", "asasas","1234", -1, 1);
 INSERT INTO email (username, passord, salt, mailtype, bruker_id) VALUES ("peder@outlook.com", "asasas","1234", -1, 1);
 INSERT INTO email (username, passord, salt, mailtype, bruker_id) VALUES ("gunnar@gmail.com", "asasas", "1234", -1, 2);
 INSERT INTO bruker (name) VALUES ("peder");
-INSERT INTO bruker (name) VALUES ("gunnar");
+INSERT INTO bruker (name) VALUES ("gunnar");*/

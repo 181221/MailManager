@@ -1,11 +1,20 @@
 package no.pederyo.klient.manager;
 
+import no.pederyo.Attributter;
 import no.pederyo.dataaccess.BrukerEAO;
+import no.pederyo.dataaccess.EmailEAO;
 import no.pederyo.grensesnitt.Grensesnitt;
+import no.pederyo.klient.meny.Meny;
 import no.pederyo.modell.Bruker;
+import no.pederyo.modell.Email;
 import no.pederyo.protokoll.implementasjon.Imap;
 import no.pederyo.protokoll.implementasjon.Smtp;
 import no.pederyo.util.CSVSkriverUtil;
+import org.mindrot.jbcrypt.BCrypt;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.Scanner;
 
 import static no.pederyo.Attributter.BRUKER_FILNAVN;
@@ -17,38 +26,66 @@ public class ManagerKlient {
     private static Imap imap;
     private static Smtp smtp;
     private static Grensesnitt grensesnitt = new Grensesnitt();
+    private static EntityManagerFactory emf;
+    private static EntityManager em;
 
     public static void main(String[] args)  {
         String menu = "1: Opprett en mailklient bruker\n2: Logginn\n3: Avslutt";
         int valg;
+        String brukernavn;
+        Bruker b;
+        emf = Persistence.createEntityManagerFactory("hibernate");
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
         do {
             System.out.println(menu);
             valg = in.nextInt();
             switch (valg){
                 case 1:
+                    in.nextLine();
+
                     System.out.print("Skriv inn brukernavn");
-                    String brukernavn = in.nextLine();
+                    brukernavn = in.nextLine();
                     //valider
-                    Bruker b = BrukerEAO.getBruker(brukernavn);
+                    b = BrukerEAO.getBruker(em, brukernavn);
                     if(b != null) {
                         System.out.println("Det eksisterer allerede en bruker med det navnet");
                     }else {
-                        BrukerEAO.insertBruker(brukernavn);
+                        b = new Bruker();
+                        b.setName(brukernavn);
+                        BrukerEAO.insertBruker(em, b);
                     }
+                    break;
 
                    /* if(MenyHjelper.harProfil()){
                         System.out.println("Du har allerede en klient.");
                     }else {
                         opprettKlient();
                     }
-                    break*/;
+                    break*/
                 case 2:
                     System.out.println("skriv inn brukernavn");
-                    String brukernavnn = in.nextLine();
-                    Bruker bb = BrukerEAO.getBruker(brukernavnn);
-                    if(bb != null) {
+                    in.nextLine();
+                    brukernavn = in.nextLine();
+
+                    b= BrukerEAO.getBruker(em, brukernavn);
+                    if(b != null) {
+                        if(b.getEmailsById() == null){
+                            //Opprett mailklient
+                            opprettMailklient(em, b);
+                        }else{
+                            for(Email e : b.getEmailsById()){
+                                System.out.println("Id "+ "("+e.getId()+")" +" "+ e.getUsername());
+                            }
+                            int id = Integer.parseInt(in.nextLine());
+                            Email e = EmailEAO.getMail(em, id);
+                            Imap imap = new Imap(e.getMailtype());
+                            Meny.lytterMenu(imap);
+                        }
+
                         //Meny.lytterMenu();
                     }
+                    break;
                    /* if(!MenyHjelper.harProfil())
                         System.out.println("Du har ingen Klienter. Vennligst opprett en.");
                     else{
@@ -57,12 +94,26 @@ public class ManagerKlient {
                         imap = new Imap(Attributter.FRATYPE);
                         Meny.lytterMenu(imap);*/
 
-                    break;
+
             }
 
         } while(valg != 3);
     }
 
+    private static void opprettMailklient(EntityManager em, Bruker b) {
+
+        int mailtype = grensesnitt.velgMailType();
+
+        loggInnOgConnect(mailtype);
+
+        String salt = BCrypt.gensalt(12);
+
+        String generatedSecuredPasswordHash = BCrypt.hashpw(Attributter.PASSORD, salt);
+        Attributter.setPASSORD(generatedSecuredPasswordHash);
+        Attributter.setSALT(salt);
+
+        EmailEAO.opprettMail(em, b);
+    }
 
     private static void opprettKlient() {
 
@@ -93,6 +144,7 @@ public class ManagerKlient {
             System.out.println("Passord eller brukernavn er feil.");
             grensesnitt.loggInn();
         }
+
     }
 
     private static void lagBrukerfil(){
